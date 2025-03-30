@@ -18,7 +18,7 @@ Nous avons choisi de travailler sur un jeu de données provenant de plusieurs so
 
 Ce dataset nous permet de mieux comprendre les dynamiques du réseau ferré, tant en termes de régularité que de fréquentation, et de poser des questions d’analyse pertinentes. Il constitue une base solide pour explorer les performances du système de transport public français, tant au niveau national que régional (notamment en Île-de-France).
 
-Cependant, nous devons faire du nettoyages des données : 
+Avant de pouvoir réellement effectuer les différentes visualisations permettant de mieux comprendre et traiter les données, nous allons devoir les nettoyer : 
 - renommage des colonnes
 - traitement des valeurs manquantes
 - uniformisation des types
@@ -59,14 +59,22 @@ Ce dataset est composé de **7 fichiers** issus de différentes sources publique
 
 *Un nettoyage des données est nécessaire* :
 - Harmonisation des noms de colonnes
+  - gestion des espaces, et simplification des noms de colonnes pour les rendre plus compréhensibles et accessibles 
 - Gestion des valeurs manquantes
+  - NA et valeur nulles
 - Uniformisation des types de données (date, float, int…)
 
 ---
 
 ## Objectifs & pistes d’analyse
 
-Nous avons identifié plusieurs axes d’analyse possibles autour de la ponctualité, la fréquentation et les causes des retards.
+Nous avons identifié plusieurs axes d’analyse possibles autour de la ponctualité, la fréquentation et les causes des retards. Nous pourrons évidemment en rajouter ou modifier par la suite, à mesure que nous utilisons le jeu de données. 
+Dans un premier temps nous allons faire une analyse exploratoire des données assez large, afin de mieux connaître les données que nous manipulons, puis nous entrerons dans le détail, afin de corréler les données et leur donner du sens. 
+
+### 0. **Analyse globale des données**
+- Durée moyenne des trajets en france, ou par région si besoin
+- Nombre de trajet par gares
+- Fréquentation des différentes gares...
 
 ### 1. **Évolution des retards dans le temps**
 
@@ -125,14 +133,6 @@ Nous avons identifié plusieurs axes d’analyse possibles autour de la ponctual
 
 - **Idée** : Carte de France avec les retards par région (Nord/Sud)
 - **Extension** : Comparaison entre été et hiver pour voir l’impact des conditions climatiques sur les retards
-
----
-
-### 8. **Analyse simple de la fréquentation**
-
-- **Question** : Quelles sont les gares les plus fréquentées ?
-- **Question** : Quelle est la durée moyenne des trajets par gare ?
-  - Utile pour construire une cartographie de l’importance des gares dans le réseau
 
 ---
 
