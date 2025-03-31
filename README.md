@@ -5,7 +5,7 @@
 
 ## Membres 
 - VIGNERON Marian 
-- XX
+- BRANCHUT Corentin
 - XX
 - VELIC Ajna
 
@@ -21,6 +21,7 @@ Ce dataset nous permet de mieux comprendre les dynamiques du réseau ferré, tan
 Avant de pouvoir réellement effectuer les différentes visualisations permettant de mieux comprendre et traiter les données, nous allons devoir les nettoyer : 
 - renommage des colonnes
 - traitement des valeurs manquantes
+- traitement des valeurs aberrantes
 - uniformisation des types
 </p>
 
@@ -60,7 +61,7 @@ Ce dataset est composé de **7 fichiers** issus de différentes sources publique
 *Un nettoyage des données est nécessaire* :
 - Harmonisation des noms de colonnes
   - gestion des espaces, et simplification des noms de colonnes pour les rendre plus compréhensibles et accessibles 
-- Gestion des valeurs manquantes
+- Gestion des valeurs manquantes / aberrantes
   - NA et valeur nulles
 - Uniformisation des types de données (date, float, int…)
 
@@ -154,6 +155,14 @@ Dans un premier temps nous allons faire une analyse exploratoire des données as
 
 ---
 
+## Limites anticipées
+
+1. Limitation géographique : Paris et sa proche banlieue
+2. Faire attention au détail des métadonnées, notamment pour les causes d'incident
+3. Validations sur une periodicité plus courte que le premier dataset, uniquement 2019
+4. Faire attention à l'agrégat qui pourrait masquer des variations intra-quotidiennes
+
+---
 ## Conclusion
 <p align="justify">
 Ce projet vise à combiner rigueur analytique et visualisation claire pour mieux comprendre les problématiques de ponctualité et de fréquentation dans le transport ferroviaire français. Il pourrait servir de base à des réflexions pour améliorer le service public ou optimiser la gestion du réseau.
