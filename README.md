@@ -6,7 +6,7 @@
 ## Membres 
 - VIGNERON Marian 
 - BRANCHUT Corentin
-- XX
+- WILLIATTE Oscar
 - VELIC Ajna
 
 ## Contexte du jeu de données
@@ -56,11 +56,14 @@ Ce dataset est composé de **7 fichiers** issus de différentes sources publique
   - Données **catégorielles** : causes de retards, type de titre, nom de liaison
   - Données **géographiques** : coordonnées des stations, noms des gares
 
+Remarque : Aucune donnée temporelle n'est de type date
+
 ---
 
 *Un nettoyage des données est nécessaire* :
 - Harmonisation des noms de colonnes
-  - gestion des espaces, et simplification des noms de colonnes pour les rendre plus compréhensibles et accessibles 
+  - gestion des espaces (qui compliquent la sélection des données, remplacement par '_')
+  - simplification des noms de colonnes pour les rendre plus compréhensibles et accessibles 
 - Gestion des valeurs manquantes / aberrantes
   - NA et valeur nulles
 - Uniformisation des types de données (date, float, int…)
@@ -148,7 +151,7 @@ Dans un premier temps nous allons faire une analyse exploratoire des données as
 
 ## Prochaines étapes
 
-1. Nettoyage des données : renommage des colonnes, traitement des valeurs nulles
+1. Nettoyage des données : renommage des colonnes, traitement des valeurs nulles, changement des types de variables
 2. Exploration rapide pour identifier les variables clés
 3. Construction d’un pipeline d’analyse et de visualisation
 4. Réalisation d’analyses plus poussées autour des causes, de la saisonnalité, etc.
@@ -161,6 +164,9 @@ Dans un premier temps nous allons faire une analyse exploratoire des données as
 2. Faire attention au détail des métadonnées, notamment pour les causes d'incident
 3. Validations sur une periodicité plus courte que le premier dataset, uniquement 2019
 4. Faire attention à l'agrégat qui pourrait masquer des variations intra-quotidiennes
+5. Mise en relation des deux csv : à priori, pas d'attribut commun
+6. Colonne de commentaires : informations utiles mais difficilement analysable et trop souvent nulles (77%)
+7. Colonne de nombre de validations : imprécision lorsque la valeur est en dessous de 5 (la valeur de la ligne est "less than 5", ce qui complique une conversion de la colonne en entier)
 
 ---
 ## Conclusion
