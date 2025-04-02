@@ -8,5 +8,19 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
 ```{r}
-plot(cars)
+library(dplyr)
+library(readr)
+
+data_trains <- read_csv("data/Train_dataset.csv")
+
+data_trains <- data_trains %>% select(-`Comment (optional) delays at departure`, -`Comment (optional) delays on arrival`)
+
+names(data_trains) <- gsub("\\s*\\([^)]*\\)", "", names(data_trains))
+names(data_trains) <- gsub(" ", "_", names(data_trains))
+names(data_trains) <- gsub("_$", "", names(data_trains))
+
+nombre_NA <- sum(rowSums(is.na(data_trains)) > 0)
+nombre_NA
+
+data_NA <- data_trains[apply(data_trains, 1, function(x) any(is.na(x))), ]
 ```
