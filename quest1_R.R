@@ -34,7 +34,7 @@ retards_mensuels <- data_trains %>%
   ) %>%
   mutate(date = as.Date(sprintf("%d-%02d-01", Year, Month)))
 
-# Simule un nombre total de trains (à remplacer si tu as des vraies données)
+#Nombre total de trains
 retards_mensuels <- retards_mensuels %>%
   mutate(
     total_retards = retard_15min + retard_30min + retard_60min,
