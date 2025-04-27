@@ -137,9 +137,13 @@ ecrire ici reponse 0
 
 <p align="justify">
 Dans les graphes suivants :
+
 - Il est **possible de zoomer** sur une période précise (exemple : uniquement l’année 2019) pour mieux analyser les pics de retard.
+
 - On peut **montrer/cacher certaines courbes** (ex : n'afficher que les retards > 60 min).
+
 - Il y a également un **pop-up** interactif qui s’affiche au survol, montrant les valeurs exactes.
+
 - Certains graphiques sont actuellement affiché pour **2019**.  
   
   _Plus tard, avec **Shiny**, nous ajouterons un **slider interactif** pour choisir l'année dynamiquement._
@@ -771,11 +775,16 @@ On détaillera cela dans une prochaine question.
 
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
 
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(plotly)
 
+# Construction de la date (si jamais utile plus tard)
 data_trains <- data_trains %>%
   mutate(date = as.Date(sprintf("%d-%02d-01", Year, Month)))
 
-# Aggréger les retards par gare
+# Agréger les retards par gare
 retards_gares <- data_trains %>%
   group_by(Departure_station) %>%
   summarise(
@@ -786,28 +795,36 @@ retards_gares <- data_trains %>%
     .groups = "drop"
   )
 
-# --- Top 20 ---
-top_gares <- retards_gares %>%
+# Top 3 gares
+top3_gares <- retards_gares %>%
   arrange(desc(total_retards)) %>%
-  slice(1:20)
+  slice(1:3)
 
-# Format long
-top_gares_long <- top_gares %>%
+# Regrouper les autres
+autres_gares <- retards_gares %>%
+  filter(!(Departure_station %in% top3_gares$Departure_station)) %>%
+  summarise(
+    Departure_station = "Autres gares",
+    retard_15min = sum(retard_15min, na.rm = TRUE),
+    retard_30min = sum(retard_30min, na.rm = TRUE),
+    retard_60min = sum(retard_60min, na.rm = TRUE),
+    total_retards = sum(total_retards, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Combiner top 3 + autres
+retards_final <- bind_rows(top3_gares, autres_gares)
+
+# Format long pour ggplot
+retards_long <- retards_final %>%
   pivot_longer(cols = c(retard_15min, retard_30min, retard_60min),
-               names_to = "Type_retard", values_to = "Nombre") %>%
+               names_to = "Type_retard",
+               values_to = "Nombre") %>%
   mutate(
-    Pourcentage_local = round((Nombre / total_retards) * 100, 1),
     Type_retard = factor(Type_retard, levels = c("retard_15min", "retard_30min", "retard_60min"))
   )
 
-# Part des retards totaux
-retard_total_france <- sum(retards_gares$total_retards, na.rm = TRUE)
-top_gares_long <- top_gares_long %>%
-  mutate(
-    Pourcentage_global = round((total_retards / retard_total_france) * 100, 1)
-  )
-
-# Couleurs 
+# Couleurs personnalisées
 couleurs_retard <- c(
   "retard_15min" = "#FFEE58",
   "retard_30min" = "#FFA726",
@@ -815,19 +832,21 @@ couleurs_retard <- c(
 )
 
 # Graphique
-p <- ggplot(top_gares_long, aes(x = reorder(Departure_station, total_retards), y = Nombre, fill = Type_retard,
-                                text = paste0(
-                                  "<b>Gare :</b> ", Departure_station, "<br>",
-                                  "Trains en retards : ", Nombre, " trains<br>",
-                                  "Proportion locale : ", Pourcentage_local, "%<br>",
-                                  "Part nationale : <b>", Pourcentage_global, "</b>%"
-                                ))) +
+p <- ggplot(retards_long, aes(
+  x = reorder(Departure_station, -Nombre, FUN = sum),
+  y = Nombre,
+  fill = Type_retard,
+  text = paste0(
+    "<b>Gare :</b> ", Departure_station, "<br>",
+    "Trains en retard : ", Nombre, " trains"
+  )
+)) +
   geom_col(position = "stack") +
   coord_flip() +
   scale_fill_manual(values = couleurs_retard,
                     labels = c("> 15 min", "> 30 min", "> 60 min")) +
   labs(
-    title = "Top 20 gares par retards cumulés",
+    title = "Répartition des retards : Top 3 gares + Autres",
     x = "Gare de départ",
     y = "Nombre de trains en retard",
     fill = "Type de retard"
@@ -838,87 +857,18 @@ p <- ggplot(top_gares_long, aes(x = reorder(Departure_station, total_retards), y
     axis.text.y = element_text(size = 10)
   )
 
-# Interaction
+# Interaction Plotly
 p <- ggplotly(p, tooltip = "text")
 
 # Affichage
 p
 
 
-```
-
-
-```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
-# Construction du dataset
-retards_totaux <- data_trains %>%
-  filter(Year == annee_selectionnee) %>%
-  group_by(Departure_station) %>%
-  summarise(
-    retard_depart = sum(Number_of_late_trains_at_departure, na.rm = TRUE),
-    retard_arrivee = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
-    retards_totaux = retard_depart + retard_arrivee,
-    .groups = "drop"
-  ) %>%
-  arrange(desc(retards_totaux))
-
-# Top 3 gares
-top3_gares <- retards_totaux %>% slice(1:3)
-
-# Autres regroupés
-reste_gares <- retards_totaux %>%
-  filter(!(Departure_station %in% top3_gares$Departure_station)) %>%
-  summarise(
-    Departure_station = "Autres gares",
-    retards_totaux = sum(retards_totaux, na.rm = TRUE)
-  )
-
-# Combinaison 
-donnees_pie <- bind_rows(top3_gares, reste_gares)
-
-# Ajout du pourcentage 
-total_global <- sum(donnees_pie$retards_totaux)
-
-donnees_pie <- donnees_pie %>%
-  mutate(
-    pourcentage = round((retards_totaux / total_global) * 100, 1),
-    label_tooltip = paste0(
-      "<b>Gare :</b> ", Departure_station, "<br>",
-      "<b>Retards :</b> ", retards_totaux, " trains<br>",
-      "Soit ", pourcentage, "% des retards"
-    )
-  )
-
-# Piechart
-library(plotly)
-
-p_pie <- plot_ly(
-  donnees_pie,
-  labels = ~Departure_station,
-  values = ~retards_totaux,
-  type = 'pie',
-  textinfo = 'label+percent',
-  hoverinfo = 'text',
-  text = ~label_tooltip,
-  marker = list(colors = c("#EF5350", "#FFA726", "#FFEE58", "lightgrey"))  # Couleurs imposées
-) %>%
-  layout(
-    title = list(
-      text = paste0("<b>Répartition des retards par gare (", annee_selectionnee, ")</b>"),
-      x = 0.5,
-      xanchor = "center"
-    ),
-    showlegend = TRUE
-  )
-
-# Affichage
-p_pie
-
 
 ```
 
 
-- **Histogramme** des 20 gares les plus concernées par les retards.
-- **Camembert (Pie chart)** : Répartition des retards entre les 3 principales gares vs le reste.
+- **Histogramme** des 3 gares les plus concernées par les retards en comparaisons aux autres.
 
 ---
 
