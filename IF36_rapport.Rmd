@@ -1211,6 +1211,7 @@ ggplot(moyennes_depsta, aes(x = cause, y = Departure_station, fill = moyenne)) +
 
 ```
 ### Explication du graphe
+
 Ce graphique, sous forme de **heatmap**, décrit les proportions de causes de retard des trains selon les **stations de départ**. Plus la proportion d'une cause de retard est grande, plus la case correspondante tend vers le rouge foncé.
 
 ### Observations et hypothèses
