@@ -2,17 +2,17 @@
 title: "Analyse du Réseau de Transport Ferroviaire en France"
 author: "VIGNERON Marian, BRANCHUT Corentin, WILLIATTE Oscar, VELIC Ajna"
 output:
+  pdf_document:
+    toc: true
   html_document:
     toc: true
     toc_float: true
     number_sections: true
     theme: flatly
-  pdf_document:
-    toc: true
 ---
 
 
-![](https://github.com/user-attachments/assets/fb0fd7d8-5538-4ca6-abd7-2ad781d83776)
+![](imgsncf.png)
 
 
 ## Contexte du jeu de données
@@ -338,6 +338,34 @@ Dans les graphes suivants :
 
 </p>
 
+```{r}
+library(dplyr)
+library(readr)
+library(tidyr)
+library(plotly)
+library(lubridate)
+
+
+library(htmlwidgets)  
+library(webshot2)     
+library(knitr)
+
+save_plotly <- function(p, width = 900, height = 650, dpi = 96) {
+  
+  if (knitr::is_latex_output()) {
+    tmp_html <- tempfile(fileext = ".html")
+    tmp_png  <- tempfile(fileext = ".png")
+    htmlwidgets::saveWidget(p, tmp_html, selfcontained = TRUE)
+    webshot2::webshot(tmp_html, file = tmp_png,
+                      vwidth = width, vheight = height, zoom = dpi / 96)
+    knitr::include_graphics(tmp_png)
+  } else {
+    p
+  }
+}
+```
+
+
 ## Comment la ponctualité évolue-t-elle au fil des mois ?
 
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
@@ -486,7 +514,7 @@ fig <- fig %>%
     hovermode = "closest"
   )
 
-fig
+save_plotly(fig)
 ```
 ### Explication du graphe
 
@@ -683,7 +711,7 @@ p <- ggplot() +
 p_interactif <- ggplotly(p, tooltip = "text")
 
 # --- Affichage ---
-p_interactif
+save_plotly(p_interactif)
 ```
 ### Explication du graphe
 
@@ -773,7 +801,7 @@ p <- ggplot(retards_top20, aes(x = Mois_annee, y = Departure_station, fill = tot
 p <- ggplotly(p, tooltip = "text")
 
 #  Affichage 
-p
+save_plotly(p)
 
 
 
@@ -861,7 +889,7 @@ p <- ggplot(retards_top20, aes(
 p <- ggplotly(p, tooltip = "text")
 
 #  Affichage 
-p
+save_plotly(p)
 
 ```
 
@@ -945,7 +973,7 @@ p <- ggplot(retards_top20, aes(
 p <- ggplotly(p, tooltip = "text")
 
 #  Affichage 
-p
+save_plotly(p)
 
 
 ```
@@ -1049,7 +1077,7 @@ p <- ggplot(retards_long, aes(
 p <- ggplotly(p, tooltip = "text")
 
 # Affichage
-p
+save_plotly(p)
 
 
 
