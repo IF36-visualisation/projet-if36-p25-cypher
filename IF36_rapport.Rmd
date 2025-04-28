@@ -94,7 +94,7 @@ Notre analyse portant exclusivement sur la France métropolitaine, nous avons fi
 ```{r warning=FALSE, message=FALSE}
 
 # Liste des gares étrangères à exclure
-gares_etranger <- c("LAUSANNE", "ZURICH", "STUTTGART", "ITALIE", "GENEVE", "MADRID", "FRANCFORT")
+gares_etranger <- c("LAUSANNE", "ZURICH", "STUTTGART", "ITALIE", "GENEVE", "MADRID", "FRANCFORT","BARCELONA")
 
 # Filtrage des trajets
 data_trains <- data_trains %>%
@@ -356,7 +356,7 @@ names(data_trains) <- gsub(" ", "_", names(data_trains))
 names(data_trains) <- gsub("_$", "", names(data_trains))
 
 # Exclure les gares étrangères
-gares_etranger <- c("LAUSANNE", "ZURICH", "STUTTGART", "ITALIE", "GENEVE", "MADRID", "FRANCFORT")
+gares_etranger <- c("LAUSANNE", "ZURICH", "STUTTGART", "ITALIE", "GENEVE", "MADRID", "FRANCFORT", "BARCELONA")
 data_trains <- data_trains %>%
   filter(!(Departure_station %in% gares_etranger | Arrival_station %in% gares_etranger))
 
@@ -1087,4 +1087,141 @@ Plus tard, avec **Shiny**, nous créerons une **application interactive** qui pe
 Cela permettra de **confirmer ou nuancer** les tendances mises en évidence ici.
 
 ---
+
+# Analyse des causes de retard
+
+## Quelles sont les principales causes de retard ?
+
+Nous voulons savoir quelle sont les principales causes de retard. Pour cela, nous calculons la moyenne pour chaque liaison de la proportion des causes.
+
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+
+data_trains <- data_trains %>% 
+  rename(
+    cause_externe = Delay_due_to_external_causes,
+    infra_ferroviaire = Delay_due_to_railway_infrastructure,
+    gestion_trafic = Delay_due_to_traffic_management,
+    materiel_roulant = Delay_due_to_rolling_stock,
+    cause_voyageur = Delay_due_to_travellers_taken_into_account,
+    retard_station = Delay_due_to_station_management_and_reuse_of_material
+  ) 
+
+proportion_retards <- data_trains %>% 
+  summarise(across(c(cause_externe, infra_ferroviaire, gestion_trafic, 
+                     materiel_roulant, cause_voyageur, retard_station), mean, na.rm = TRUE))
+
+proportion_retards <- proportion_retards %>% 
+  pivot_longer(everything(), names_to = "cause", values_to = "moyenne")
+proportion_retards <- proportion_retards %>%
+  arrange(desc(moyenne))
+proportion_retards <- proportion_retards %>% 
+  mutate(cause = factor(cause, levels = cause))
+
+ggplot(proportion_retards, aes(x = cause, y = moyenne)) +
+  geom_col(fill="skyblue") +
+  geom_text(aes(label = round(moyenne, 1), size = moyenne), 
+            position = position_stack(vjust = 0.5),
+            color = "white") +
+  labs(title = "Proportion de retards par cause",
+       x = "Cause du retard",
+       y = "Pourcentage de retards") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, 30, by = 4)) +
+  scale_size_continuous(range = c(5, 10)) +
+  guides(size = "none")
+```
+
+### Explication du graphe
+
+Ce graphique représente la proportion de cause des retards référencés dans le dataset. Ces causes sont divisées en plusieurs catégories : 
+
+- les causes externes (par exemple le temps, les obstacles sur la voie ou des actions malveillantes)
+- l'infrastructure ferroviaire (par exemple pendant des travaux de maintenance)
+- la gestion du traffic (par exemple pendant les correspondances)
+- le matériel roulant (par exemple lors d'une panne ou d'une anomalie sur la rame)
+- le retard en station (par exemple sur la réutilisation du matériel)
+- le retard du aux voyageurs (par exemble au moment de l'embarcation)
+
+### Observations
+
+- On peut voir que les causes de retard les plus fréquentes sont celles liées à **l'extérieur** et celles liées à **l'infrastructure ferroviaire**, à respectivement **27%** et **26%** environ. 
+- Les retards dûs aux **voyageurs** en eux-mêmes sont beaucoup moins fréquents, n'atteignant pas **4%** des retards renseignés dans le dataset.
+
+## Certaines causes sont-elles plus fréquentes selon les mois ?
+
+Nous avons maintenant une certaine idée de la proportion de chaque cause, mais ce chiffre n'est possiblement pas tout le temps le même. Ici, nous calculons alors de la même manière la proportion de retards, mais cette fois-ci pour chaque mois.
+
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+proportion_mois <- data_trains %>% 
+  group_by(Month) 
+proportion_mois <- proportion_mois %>% 
+  summarise(across(c(cause_externe, infra_ferroviaire, gestion_trafic, 
+                     materiel_roulant, cause_voyageur, retard_station), 
+                   mean, na.rm = TRUE)) 
+proportion_mois <- proportion_mois %>%
+  pivot_longer(cols = -Month, names_to = "cause", values_to = "moyenne")
+
+ggplot(proportion_mois, aes(x = Month, y = moyenne, fill = cause)) +
+  geom_col(position = "stack") +
+  geom_text(aes(label = round(moyenne, 1)), 
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 2.5) +
+  labs(title = "Proportion des retards par mois et par cause",
+       x = "Mois",
+       y = "Proportion de retards") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_continuous(breaks = seq(1,12, by = 1), labels = month.abb)
+```
+
+### Explication du graphe
+
+Ce graphique, sous forme de **stacked bar plot**, décrit les proportions de causes de retard des trains **selon les mois**, classés dans l'ordre chronologique. Les causes sont les mêmes que celles évoquées dans le précédent graphique
+
+### Observations et hypothèses
+
+On peut alors voir que les proportions restent **sensiblement les même pour la plupart** chaque mois, mais on observe tout de même des **différences notables** lorsqu'on observe plus en détail :
+
+- Les retards pour **causes extérieures** sont **moins fréquentes en été**. Cela peut s'expliquer par la météo, plus clémente pour le réseau ferroviaire en cette période
+
+- On observe un **pic de retard** à cause de **l'infrastructure ferroviaire** en **avril et juin**. On peut alors supposer que la SNCF choisit ces dates pour entreprendre des travaux de maintenance. En effet, ces dates sont proches des vacances d'été et donc proches des fortes affluences qu'il faut préparer.
+
+- Aux mois de **juillet et aout**, les **retards liés aux passagers** sont **plus importants** qu'aux autres mois. Cela peut être dû à la forte affluence amenée par les vacances d'été, entraînant des problèmes d'organisation.
+
+## Certaines causes sont-elles plus fréquentes selon les stations ?
+
+La temporalité n'est pas le seul facteur qui pourrait influencer les causes de retard. En effet, celles-ci peuvent être influencées par l'emplacement de la gare, selon la météo ou la voirie à l'emplacement concerné par exemple.
+
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+
+moyennes_depsta <- data_trains %>% 
+  group_by(Departure_station) %>% 
+  summarise(across(c(cause_externe, infra_ferroviaire, gestion_trafic, 
+                     materiel_roulant, cause_voyageur, retard_station), 
+                   mean, na.rm = TRUE)) %>%
+  pivot_longer(cols = -Departure_station, names_to = "cause", values_to = "moyenne")
+
+ggplot(moyennes_depsta, aes(x = cause, y = Departure_station, fill = moyenne)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "red") +
+  labs(title = "Proportion des retards par station de départ et par cause",
+       x = "Station de départ",
+       y = "Cause de retard",
+       fill = "Proportion de retard") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6),axis.text.y = element_text(size = 7))
+
+```
+### Explication du graphe
+Ce graphique, sous forme de **heatmap**, décrit les proportions de causes de retard des trains selon les **stations de départ**. Plus la proportion d'une cause de retard est grande, plus la case correspondante tend vers le rouge foncé.
+
+### Observations et hypothèses
+
+On peut alors voir que les proportions restent **sensiblement les même pour la plupart** pour chaque station, mais on observe tout de même des **disparités notables** dans certains cas :
+
+- Les retards pour **causes extérieures** sont **plus fréquents** dans les villes de **Brest, Perpignan et Quimper**. Deux de ces villes étant en Bretagne, il est possible de se dire que le climat de la région amène à plus de retard.
+
+- On observe une **plus grande proportion** de retard à cause de **l'infrastructure ferroviaire au Mans, à Angoulême, à Poitiers ou encore à Angers**. On peut alors supposer, puisque les villes sont plus ou moins proches les unes des autres, que ces travaux de maintenance on eu lieu sur les mêmes infrastructures.
+
+## Conclusion question cause des retards
+
+On a donc appris que les causes de retard les plus fréquentes étaient les causes extérieures et l'infrastructure ferroviaire. Malgré cette tendance remarquée, ces causes peuvent varier selon le temps et les stations concernées.
 
