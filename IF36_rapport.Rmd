@@ -163,7 +163,7 @@ ggplot(data_2019, aes(x = Average_travel_time)) +
 <p align="justify">
 Ce graphique nous donne une idée de la répartition de la durées des trajets en france, et nous permet de nous rendre compte des points suivants : 
 
-- Beaucoup de trajets durent moins de 3h, pour ne pas dire la majorité.
+- Beaucoup de trajets durent moins de 4h, pour ne pas dire la majorité.
 - Les trajets de plus de5h30 sont vraiment minoritaires, et peuvent peut être par la suite causer des irrégularités dans les données. En effet, des valeurs extremes et peu nombreuses peuvent fausser une corrélation...
 - Les trajets les plus nombreux sont autour des 2 heures.
 </p>
@@ -219,7 +219,14 @@ ggplot(top_gares_2019, aes(x = reorder(Departure_station, mean_travel_time_hr), 
 
 ```
 <p align="justify">
-explication du graphique
+Ce graphique nous permet de voir les temps moyens de trajet en fonction des gares. Cela est utile pour la suite, car nous allons certainemenent chercher à correler les données des gares avec les retards moyen. Avoir eu cette visualisation en premier lieu nous permet de choisir quelles gares pourraient être interessantes à analyser (les gares avec les trajets moyens les plus longs, les plus courts, ou entre les deux). On peut aussi se faire une idée du type de trajet pour chaque gares : 
+
+- Les trajets a partir de Nice sont probablement en majorité à destination de Paris au vu de la longeur des trajets (ce que l'on peut valider dans les données brutes).
+- La moyenne des trajets depuis Paris est situé au milieu de la plage de durée, car ils deservent presque toutes les destinations présentes dans la base
+
+Ce graphique nous est très utile pour être plus efficace dans nos choix de visualisation pour la suite, et dans les choix de cherry picking (effectués de manière honnête) si necessaire. 
+Encore une fois, par la suite nous pourrons visualiser ces données sur l'ensemble des années avec un dashboard. 
+Ici, une aggrégation des données annuelles aurait diminué la réalité des temps moyens de trajet. 
 </p>
 
 
@@ -227,35 +234,77 @@ explication du graphique
 
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
 
-library(scales)  # Il faut appeler scales si ce n'est pas encore fait
+library(scales)
+
+# Filtrer uniquement 2019
+data_2019 <- data_trains %>%
+  filter(Year == 2019)
 
 # Comptage des départs
-departures <- data_trains %>%
+departures_2019 <- data_2019 %>%
   group_by(Departure_station) %>%
   summarise(nb_departures = sum(Number_of_expected_circulations, na.rm = TRUE))
 
 # Comptage des arrivées
-arrivals <- data_trains %>%
+arrivals_2019 <- data_2019 %>%
   group_by(Arrival_station) %>%
   summarise(nb_arrivals = sum(Number_of_expected_circulations, na.rm = TRUE))
 
 # Fusionner les deux
-frequentation <- full_join(departures, arrivals, by = c("Departure_station" = "Arrival_station")) %>%
+frequentation_2019 <- full_join(departures_2019, arrivals_2019, by = c("Departure_station" = "Arrival_station")) %>%
   mutate(total_freq = rowSums(across(c(nb_departures, nb_arrivals)), na.rm = TRUE)) %>%
   rename(Station = Departure_station) %>%
   arrange(desc(total_freq))
 
+# Ajouter une colonne pour la couleur
+frequentation_2019 <- frequentation_2019 %>%
+  mutate(color = case_when(
+    row_number() <= 3 ~ "red",
+    row_number() <= 8 ~ "orange",
+    TRUE ~ "yellow"
+  ))
 
-ggplot(frequentation[1:20, ], aes(x = reorder(Station, total_freq), y = total_freq)) +
-  geom_bar(stat = "identity", fill = "tomato") +
+# Visualisation
+ggplot(frequentation_2019[1:20, ], aes(x = reorder(Station, total_freq), y = total_freq, fill = color)) +
+  geom_bar(stat = "identity") +
+  scale_fill_identity() +  # Important pour utiliser directement les couleurs fixées dans la colonne
   scale_y_continuous(labels = comma) +
   coord_flip() +
-  labs(title = "Top 10 gares par trajets", x = "Gare", y = "Fréquentation totale (départs + arrivées)")
+  labs(
+    title = "Top 20 des gares par trajets en 2019",
+    x = "Gare",
+    y = "Fréquentation totale (départs + arrivées)"
+  ) +
+  theme_minimal()
+
+
 
 
 ```
 <p align="justify">
-A changer : faire par années 
+Ce graphique nous permet de voir la fréquentation totale (départs + arrivées) des différentes gares pour l'année 2019. Il est utile pour la suite de notre analyse, car il nous permet d’identifier quelles gares génèrent le plus de trafic ferroviaire.Ces gares auront probablement un impact plus important sur les analyses de retards globaux, et mériteront donc une attention particulière.
+
+Grâce à cette visualisation, nous pouvons faire plusieurs observations immédiates :
+
+- Les gares situées en haut du classement (comme Paris Gare de Lyon, Paris Montparnasse, ou Lyon Part-Dieu) sont logiquement des hubs majeurs du réseau SNCF.
+
+- Certaines gares régionales (comme Marseille, Lille ou Bordeaux Saint-Jean) apparaissent également, ce qui montre leur importance dans les flux nationaux.
+
+- La concentration du trafic sur un nombre relativement restreint de gares implique que des retards dans ces gares pourraient avoir des effets "cascades" plus forts sur l'ensemble du réseau.
+
+Ce graphique est très utile pour guider nos prochaines étapes :
+
+- Sélectionner les gares à analyser en priorité (celles avec la plus forte fréquentation).
+
+- Comparer les taux de retard selon la fréquentation des gares.
+
+- Mieux structurer notre dashboard final : nous pourrons choisir d'afficher des indicateurs spécifiques sur les gares les plus actives.
+
+Enfin, travailler uniquement sur l'année 2019 est important ici :
+
+En agrégeant plusieurs années, nous aurions "écrasé" des variations annuelles importantes (par exemple des années impactées par des grèves ou la crise Covid). Cela nous permet de garder une vision plus précise et réaliste de l’activité sur une année "type".
+
+On peut aussi noter que les gares les plus fréquentées ne sont pas les gares avec les temps de trajets les moyens les plus longs, ce qui nous évitera de chercher une correlation la ou il n'y en a pas.
 </p>
 
 # Évolution des retards dans le temps
