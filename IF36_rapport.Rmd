@@ -168,6 +168,8 @@ Ce graphique nous donne une idée de la répartition de la durées des trajets e
 - Les trajets les plus nombreux sont autour des 2 heures.
 </p>
 
+## Temps de trajet moyen par gares
+
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
 
 library(dplyr)
@@ -185,12 +187,19 @@ top_gares_2019 <- data_2019 %>%
   arrange(desc(mean_travel_time_hr)) %>%
   slice(1:20)
 
-# 3. Faire le graphique avec étiquettes
-ggplot(top_gares_2019, aes(x = reorder(Departure_station, mean_travel_time_hr), y = mean_travel_time_hr)) +
-  geom_col(fill = "cornflowerblue") +
-  geom_text(aes(label = round(mean_travel_time_hr, 1)),   # Ajout des étiquettes arrondies à 1 décimale
-            hjust = -0.1,                                 # Décale légèrement à droite des barres
-            size = 3.5) +                                 # Taille du texte
+# 3. Faire le graphique avec les étiquettes au bout des barres
+ggplot(top_gares_2019, aes(x = reorder(Departure_station, mean_travel_time_hr), y = mean_travel_time_hr, fill = mean_travel_time_hr)) +
+  geom_col() +
+  geom_text(aes( y = mean_travel_time_hr - 0.1,label = round(mean_travel_time_hr, 1)),   # Ajout des étiquettes arrondies à 1 décimale
+            size = 3.5,                                 # Taille du texte
+            color = "white",                            # Couleur du texte (blanc pour contraste)
+            fontface = "bold",                          # Gras pour plus de visibilité
+            hjust = 1,                                  # Positionner l'étiquette à la fin de la barre
+            vjust = 0.4) +  # Centrer verticalement l'étiquette
+  scale_fill_gradient(
+    low = "lightblue",  # Couleur pour les petits temps
+    high = "navy"       # Couleur pour les grands temps
+  ) +
   coord_flip() +
   labs(
     title = "Gares avec les temps de trajet moyens les plus longs (2019)",
@@ -201,12 +210,53 @@ ggplot(top_gares_2019, aes(x = reorder(Departure_station, mean_travel_time_hr), 
   theme(
     axis.title.x = element_text(size = 12, face = "bold"),
     axis.title.y = element_text(size = 12, face = "bold"),
-    plot.margin = margin(1, 1, 1, 3)  # Ajoute de l'espace à gauche pour les étiquettes
+    axis.line = element_line(color = "black"),
+    plot.margin = margin(1, 1, 1, 3),  # Ajoute de l'espace à gauche pour les étiquettes
+    legend.position = "none"   # <-- Ici on supprime la légende
   )
 
 
-```
 
+```
+<p align="justify">
+explication du graphique
+</p>
+
+
+## Fréquentations des gares
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+
+library(scales)  # Il faut appeler scales si ce n'est pas encore fait
+
+# Comptage des départs
+departures <- data_trains %>%
+  group_by(Departure_station) %>%
+  summarise(nb_departures = sum(Number_of_expected_circulations, na.rm = TRUE))
+
+# Comptage des arrivées
+arrivals <- data_trains %>%
+  group_by(Arrival_station) %>%
+  summarise(nb_arrivals = sum(Number_of_expected_circulations, na.rm = TRUE))
+
+# Fusionner les deux
+frequentation <- full_join(departures, arrivals, by = c("Departure_station" = "Arrival_station")) %>%
+  mutate(total_freq = rowSums(across(c(nb_departures, nb_arrivals)), na.rm = TRUE)) %>%
+  rename(Station = Departure_station) %>%
+  arrange(desc(total_freq))
+
+
+ggplot(frequentation[1:20, ], aes(x = reorder(Station, total_freq), y = total_freq)) +
+  geom_bar(stat = "identity", fill = "tomato") +
+  scale_y_continuous(labels = comma) +
+  coord_flip() +
+  labs(title = "Top 10 gares par trajets", x = "Gare", y = "Fréquentation totale (départs + arrivées)")
+
+
+```
+<p align="justify">
+A changer : faire par années 
+</p>
 
 # Évolution des retards dans le temps
 
