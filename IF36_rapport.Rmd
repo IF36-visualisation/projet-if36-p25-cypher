@@ -1225,15 +1225,15 @@ On peut alors voir que les proportions restent **sensiblement les même pour la 
 
 On a donc appris que les causes de retard les plus fréquentes étaient les causes extérieures et l'infrastructure ferroviaire. Malgré cette tendance remarquée, ces causes peuvent varier selon le temps et les stations concernées.
 
-##Les longs trajets sont-ils plus souvent en retard ?
+## Les longs trajets sont-ils plus souvent en retard ?
 
-###Objectif
+### Objectif
 
 Nous examinons la relation entre la **durée moyenne** d’un trajet et le **retard moyen à l’arrivée**
 Deux approches : 
 
-1.Scatterplot
-2.Boxplot
+- Scatterplot
+- Boxplot
 
 ```{r}
 trajets <- data_trains
@@ -1258,14 +1258,14 @@ trajets %>%
   theme_minimal()
 ```
 
-###Explication du graphe
+### Explication du graphe
 
 Axe X : La durée moyenne des trajets du dataset.
 Axe Y : retard moyen à l’arrivée.
 Chaque point = une liaison ; 
 Ligne rouge = régression linéaire.
 
-###Observations et hypothèses
+### Observations et hypothèses
 
 Nuage très dispersé, on voit quelques valeurs extrêmes (> 200 min de retard) qui tirent la pente vers le haut.
 
@@ -1288,11 +1288,11 @@ trajets %>%
   theme_minimal()
 ```
 
-###Explication du graphe
+### Explication du graphe
 
 Identique au précédent, on enlève les outliers problématiques pour ajuster le graphique et qu'il soit plus représentatif.
 
-###Observations et hypothèses
+### Observations et hypothèses
 
 Dispersion verticale quasiment constante jusqu’à ~180 min ; au-delà, la variabilité augmente.
 
@@ -1326,18 +1326,18 @@ trajets %>%
   theme_minimal()
 ```
 
-###Explication du graphe
+### Explication du graphe
 
 Chaque boîte correspond à une tranche de 30 min de durée. Elle montre la distribution du retard moyen pour une tranche de durée du trajet.
 
-###Observations et hypothèses
+### Observations et hypothèses
 
 Médiane proche de 6 min jusqu’à la tranche 120-150 min, puis hausse continue.
 Les valeurs atypiques s’allongent après 180 min, on peut observer que les longs trajets ont plus souvent des retards supérieur à 30 min.
 
 Les trajets courts subissent plutôt des petits retards mais fréquents.
 
-##Conclusion Retard vs durée de trajet
+## Conclusion Retard vs durée de trajet
 
 La durée du trajet contribue aux retards, surtout quand elle dépasse 3 heures.
 
