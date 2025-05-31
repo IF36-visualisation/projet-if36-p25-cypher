@@ -2,13 +2,13 @@
 title: "Analyse du Réseau de Transport Ferroviaire en France"
 author: "VIGNERON Marian, BRANCHUT Corentin, WILLIATTE Oscar, VELIC Ajna"
 output:
-  pdf_document:
-    toc: true
   html_document:
     toc: true
     toc_float: true
     number_sections: true
     theme: flatly
+  pdf_document:
+    toc: true
 ---
 
 
@@ -55,7 +55,7 @@ Nous avons également **supprimé les données concernant les gares étrangères
 <p align="justify"> 
 Nous avons tout d'abord importé notre jeu de données à l'aide des librairies <b>dplyr</b> et <b>readr</b>. 
 </p>
-```{r warning=FALSE, message=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(dplyr)
 library(readr)
 
@@ -68,7 +68,7 @@ data_trains <- read_csv("data/Train_dataset.csv")
 <p align="justify"> 
 Certaines colonnes, contenant uniquement des commentaires textuels ("Comment (optional) delays at departure" et "Comment (optional) delays on arrival"), sont supprimées car elles ne sont pas pertinentes pour notre analyse. 
 </p>
-```{r warning=FALSE, message=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
 # Suppression des colonnes de commentaires
 data_trains <- data_trains %>%
@@ -80,7 +80,7 @@ data_trains <- data_trains %>%
 Pour faciliter l'utilisation du dataset, nous avons standardisé les noms de colonnes : 
 <ul> <li>Suppression des parenthèses et de leur contenu</li> <li>Remplacement des espaces par des underscores <b>_</b></li> <li>Suppression des underscores inutiles en fin de nom</li> </ul> 
 </p>
-```{r warning=FALSE, message=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Nettoyage des noms de colonnes
 names(data_trains) <- gsub("\\s*\\([^)]*\\)", "", names(data_trains)) # #Retirer les parenthèses
 names(data_trains) <- gsub(" ", "_", names(data_trains))              # #Remplacer les espaces par des underscores
@@ -91,7 +91,7 @@ names(data_trains) <- gsub("_$", "", names(data_trains))              # #Supprim
 <p align="justify"> 
 Notre analyse portant exclusivement sur la France métropolitaine, nous avons filtré les données pour supprimer les trajets passant par certaines gares étrangères (Suisse, Allemagne, Italie, Espagne). 
 </p>
-```{r warning=FALSE, message=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
 # Liste des gares étrangères à exclure
 gares_etranger <- c("LAUSANNE", "ZURICH", "STUTTGART", "ITALIE", "GENEVE", "MADRID", "FRANCFORT","BARCELONA")
@@ -105,7 +105,7 @@ data_trains <- data_trains %>%
 <p align="justify"> 
 Enfin, nous avons calculé le nombre de lignes contenant au moins une valeur manquante (<b>NA</b>) pour évaluer la qualité globale du dataset. Nous avons également extrait ces lignes pour une éventuelle analyse plus poussée. 
 </p>
-```{r warning=FALSE, message=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Nombre de lignes avec au moins une valeur manquante
 nombre_NA <- sum(rowSums(is.na(data_trains)) > 0)
 nombre_NA
@@ -338,7 +338,7 @@ Dans les graphes suivants :
 
 </p>
 
-```{r}
+```{r, echo=FALSE}
 library(dplyr)
 library(readr)
 library(tidyr)
@@ -1264,12 +1264,12 @@ Deux approches :
 - Scatterplot
 - Boxplot
 
-```{r}
+```{r, echo=FALSE}
 trajets <- data_trains
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 trajets %>% 
   filter(
     !is.na(Average_travel_time),
@@ -1298,7 +1298,7 @@ Ligne rouge = régression linéaire.
 
 Nuage très dispersé, on voit quelques valeurs extrêmes (> 200 min de retard) qui tirent la pente vers le haut.
 
-```{r}
+```{r, echo=FALSE}
 trajets %>% 
   filter(
     !is.na(Average_travel_time),
@@ -1328,7 +1328,7 @@ Dispersion verticale quasiment constante jusqu’à ~180 min ; au-delà, la vari
 Les retards extrêmes observés sur la première figure sont soit des erreurs soit le résultat d'erreur de données
 La durée du trajet n’explique qu’une petite partie des retards, d’autres facteurs (infrastructure, matériel, trafic, météo...) sont très sûrement en cause.
 
-```{r}
+```{r, echo=FALSE}
 trajets %>% 
   filter(
     !is.na(Average_travel_time), !is.na(Average_delay_of_all_arriving_trains),
