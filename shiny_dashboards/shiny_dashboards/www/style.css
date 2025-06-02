@@ -1,0 +1,105 @@
+/*tags$style(HTML("*/
+        body { background-color: #991509 !important; }
+     /* ")),*/
+
+/* tags$head( */
+/*  tags$style(HTML("*/
+          .question-panel {
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #ebdd1c;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            margin: 1rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 2rem;
+          }
+
+          /* Styles Slider Ion.RangeSlider */
+          .irs--shiny .irs-bar,
+          .irs--shiny .irs-bar-edge {
+            background-color: #ed9734 !important;
+            border-top-color:  #e65100 !important;
+            border-bottom-color: #e65100 !important;
+          }
+          .irs--shiny .irs-handle.single {
+            background-color: #e65100 !important;
+            border: 2px solid #e65100 !important;
+          }
+          .irs--shiny .irs-single {
+            background-color: #e65100 !important;
+            color: #ffffff !important;
+          }
+
+          /* Mise en page générale */
+          .outer-wrapper {
+            padding-left: 1.1rem;
+            padding-right: 1.1rem;
+            box-sizing: border-box;
+            margin: 1.1rem;
+          }
+          .flex-container {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 1.5rem;
+            margin: 1.1rem;
+            align-items: stretch;
+          }
+          .flex-item {
+            flex: 1;
+            min-width: 0; /* pour autoriser la réduction */
+          }
+          .panel-style {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 1rem;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            margin: 1rem; 
+          }
+          .flex-half-left {
+            flex: 0 0 48% !important;
+            box-sizing: border-box;
+          }
+          .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            flex: 0 0 48%;
+            box-sizing: border-box;
+            margin: 1rem;
+          }
+          .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            flex: 0 0 48%;
+            box-sizing: border-box;
+             margin: 1rem;
+             
+          }
+
+          .graph-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+          }
+          .graph-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+          }
+          .graph-plot {
+            flex: 1;
+            margin-top: 10px;
+          }
+          .map-container {
+            flex: 1;
+            min-height: 0;
+          }
+      /*  ")) */
