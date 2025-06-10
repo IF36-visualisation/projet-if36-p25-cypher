@@ -1143,10 +1143,10 @@ pal <- colorNumeric(
 
 # Filtrer pour les saisons été et hiver
 retards_saison <- data_trains_copy %>%
-  filter(Month %in% c(1:2, 7:8)) %>%
+  filter(Month %in% c(12, 1, 2, 3, 6, 7, 8, 9)) %>%
   mutate(Saison = case_when(
-    Month %in% c(7, 8) ~ "Été",
-    Month %in% c(1, 2) ~ "Hiver"
+    Month %in% c(6, 7, 8, 9) ~ "Été",
+    Month %in% c(12, 1, 2, 3) ~ "Hiver"
   )) %>%
   group_by(Saison, Departure_station) %>%
   summarise(
@@ -1202,8 +1202,13 @@ carte_hiver <- leaflet(retards_hiver) %>%
             labFormat = labelFormat(suffix = " min"))
 div(
   style = "display: flex; gap: 20px;",
-  div(style = "width: 50%;", carte_ete),
-  div(style = "width: 50%;", carte_hiver)
+  div(style = "width: 50%;",
+    tags$h4("Retard moyen en été 2019"),
+    carte_ete
+    ),
+  div(style = "width: 50%;",
+      tags$h4("Retard moyen en hiver 2019"),
+      carte_hiver)
 )
 
 
