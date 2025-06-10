@@ -1116,6 +1116,113 @@ Cela permettra de **confirmer ou nuancer** les tendances mises en évidence ici.
 
 ---
 
+# Impact des saisons et des conditions météorologiques 
+
+## Les conditions météorologiques extrêmes impactent-elles les retards moyens de train
+
+On voudrait voir si les conditions météoroligues (chaleur intense, ou neige) peuvent impacter les retards des trains en fonction de la posisition géographique des villes. Evidemment il faut aussi prendre en compte que les périodes choisies, été et hiver, sont très différentes en terme de trafic. Il y bien plus de voyage en train en été qu'en hiver, ce qui peut influer aussi. Dans tous les cas, nous nous attendons à voir une différence notable du retard moyen entre été et hiver en fonction des régions. Par exemple, nous pensons que les régions des Alpes seront potentiellement plus impactées par les périodes hivernales, dues à des chutes de neige, tandis que les régions du sud peuvent être plus impactées en été, a cause des fortes chaleurs, et des affluences plus importantes. 
+
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+library(dplyr)
+library(leaflet)
+library(readr)
+library(RColorBrewer)
+library(htmltools)
+
+# Copie du dataset d'origine
+data_trains_copy <- data_trains
+
+# Charger les coordonnées des gares
+gare_coords <- read_csv("data/gares_coords.csv")
+
+# Définir une palette de couleurs vert → jaune → rouge
+pal <- colorNumeric(
+  palette = colorRampPalette(c("green", "yellow", "red"))(100),
+  domain = NULL
+)
+
+# Filtrer pour les saisons été et hiver
+retards_saison <- data_trains_copy %>%
+  filter(Month %in% c(1:2, 7:8)) %>%
+  mutate(Saison = case_when(
+    Month %in% c(7, 8) ~ "Été",
+    Month %in% c(1, 2) ~ "Hiver"
+  )) %>%
+  group_by(Saison, Departure_station) %>%
+  summarise(
+    avg_delay_depart = mean(Average_delay_of_all_departing_trains, na.rm = TRUE),
+    avg_delay_arrivee = mean(Average_delay_of_all_arriving_trains, na.rm = TRUE),
+    avg_delay = (avg_delay_depart + avg_delay_arrivee) / 2,
+    .groups = "drop"
+  ) %>%
+  left_join(gare_coords, by = c("Departure_station" = "station")) %>%
+  filter(!is.na(latitude) & !is.na(longitude))
+
+# Séparer les saisons
+retards_ete <- retards_saison %>% filter(Saison == "Été")
+retards_hiver <- retards_saison %>% filter(Saison == "Hiver")
+
+# Recalculer le domaine de couleurs pour cohérence des deux cartes
+max_delay <- max(retards_saison$avg_delay, na.rm = TRUE)
+pal <- colorNumeric(
+  palette = colorRampPalette(c("green", "yellow", "red"))(100),
+  domain = c(0, max_delay)
+)
+
+# Carte été
+carte_ete <- leaflet(retards_ete) %>%
+  addProviderTiles("CartoDB.PositronNoLabels") %>%  # carte épurée
+  addCircleMarkers(
+    lng = ~longitude, lat = ~latitude,
+    radius = ~avg_delay,
+    fillColor = ~pal(avg_delay),
+    fillOpacity = 0.8,
+    color = ~pal(avg_delay),
+    weight = 1,
+    label = ~paste(Departure_station, ": ", round(avg_delay, 2), "min")
+  ) %>%
+  addLegend("bottomright", pal = pal, values = ~avg_delay,
+            title = "Retard moyen (été)",
+            labFormat = labelFormat(suffix = " min"))
+
+# Carte hiver
+carte_hiver <- leaflet(retards_hiver) %>%
+  addProviderTiles("CartoDB.PositronNoLabels") %>%
+  addCircleMarkers(
+    lng = ~longitude, lat = ~latitude,
+    radius = ~avg_delay,
+    fillColor = ~pal(avg_delay),
+    fillOpacity = 0.8,
+    color = ~pal(avg_delay),
+    weight = 1,
+    label = ~paste(Departure_station, ": ", round(avg_delay, 2), "min")
+  ) %>%
+  addLegend("bottomright", pal = pal, values = ~avg_delay,
+            title = "Retard moyen (hiver)",
+            labFormat = labelFormat(suffix = " min"))
+div(
+  style = "display: flex; gap: 20px;",
+  div(style = "width: 50%;", carte_ete),
+  div(style = "width: 50%;", carte_hiver)
+)
+
+
+```
+Sur les cartes, on peut valider une partie des hypothèses émises précedemment: 
+
+- En été, les gares du sud de la france, ainsi que celle de Valence TGV sont les gares avec les retards moyen les plus importants, la ou en hiver elles font partie de celles avec les retards les plus faibles. Valence est une gare de transit vers le sud de la France, ce qui corrobore l'idée qu'il y a une plus forte affluence dans le sud de la France en été. Cepandant, pour les gares du sud, on peut imaginer que le retard moyen augmente a cause de fortes chaleurs, ce qui peut causer des disfonctionnements techniques, ou provoquer des malaises chez les passagers. 
+
+- En hiver, les gares de Nord de la France, ainsi que celles autour des Alpes sont celles avec les retards moyens les plus importants. En effet, ce sont des régions de France qui peuvent être touchées par des fortes chutes de neige, ou des météo difficiles comme des pluies importantes. 
+  
+Cependant, des phénomènes que nous n'avions pas prévus apparaissent clairement sur les visualisations : 
+
+- Paris et ses environs enregistrent tellement de voyage que les retards moyen ne varient quasiment pas, le trafic est trop important de manière générale pour que les saison et la météo influent. 
+
+- De façon globale, tous les gares en bord de mer ont des temps de retard moyen plus important en été, dû probablement au trafic plus important, mais pas forcément a cause de la météo. 
+  
+Il est dur d'affirmer et de généraliser la cause de cette différence de retard moyen entre été et hiver par région géographique. Pour certaines d'entre elles, comme les Alpes, le Nord de la France et le Sud, cela peut être le cas, mais pour le reste trop de paramètre peuvent être pris en compte. 
+Cette visualisation permet de confirmer quelques hypothèses, mais nuance aussi les aprioris que nous avions. 
+
 # Analyse des causes de retard
 
 ## Quelles sont les principales causes de retard ?
