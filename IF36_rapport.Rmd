@@ -1181,8 +1181,8 @@ carte_ete <- leaflet(retards_ete) %>%
     weight = 1,
     label = ~paste(Departure_station, ": ", round(avg_delay, 2), "min")
   ) %>%
-  addLegend("bottomright", pal = pal, values = ~avg_delay,
-            title = "Retard moyen (été)",
+  addLegend("bottomleft", pal = pal, values = ~avg_delay,
+            title = "Retard moyen",
             labFormat = labelFormat(suffix = " min"))
 
 # Carte hiver
@@ -1197,8 +1197,8 @@ carte_hiver <- leaflet(retards_hiver) %>%
     weight = 1,
     label = ~paste(Departure_station, ": ", round(avg_delay, 2), "min")
   ) %>%
-  addLegend("bottomright", pal = pal, values = ~avg_delay,
-            title = "Retard moyen (hiver)",
+  addLegend("bottomleft", pal = pal, values = ~avg_delay,
+            title = "Retard moyen",
             labFormat = labelFormat(suffix = " min"))
 div(
   style = "display: flex; gap: 20px;",
