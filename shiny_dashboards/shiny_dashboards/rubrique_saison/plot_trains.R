@@ -9,6 +9,8 @@ make_retard_plot <- function(data_trains, annee) {
     filter(Year == annee) %>%
     group_by(Year, Month) %>%
     summarise(
+      nb_total     = sum(Number_of_expected_circulations, na.rm = TRUE), #pour enlever l'aléatoire
+      nb_annules   = sum(Number_of_cancelled_trains,      na.rm = TRUE), #pour enlever l'aléatoire
       retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
       retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
       retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
@@ -17,7 +19,8 @@ make_retard_plot <- function(data_trains, annee) {
     mutate(
       date = as.Date(sprintf("%d-%02d-01", Year, Month)),
       total_retards = retard_15min + retard_30min + retard_60min,
-      total_trains = total_retards + sample(8000:12000, n(), replace = TRUE),
+      #total_trains = total_retards + sample(8000:12000, n(), replace = TRUE), #fonction aléatoire remove en commentaire
+      total_trains = nb_total - nb_annules,
       a_lheure = total_trains - total_retards,
       pct_retards = round(100 * total_retards / total_trains, 1),
       tooltip_global = paste0(

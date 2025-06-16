@@ -27,3 +27,5 @@ data_trains <- read_csv("../../data/Train_dataset.csv") %>%
 
 # Extraire la liste d’années disponibles (unique + triée)
 annees_disponibles <- sort(unique(data_trains$Year))
+
+write_csv(data_trains, "data_trains_tableau.csv")
