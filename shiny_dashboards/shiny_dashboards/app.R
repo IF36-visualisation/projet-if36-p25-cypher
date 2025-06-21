@@ -21,6 +21,9 @@ source("rubrique_saison/summary_cards.R")
 source("rubrique_saison/carte_france.R")     
 source("rubrique_saison/ui_analyse_saison.R")
 #-------------------------------------
+source("rubrique_causes/ui_analyse_causes.R")
+source("rubrique_causes/plot_causes.R")
+#-------------------------------------
 
 # 3) Définir l'UI principal
 ui <- navbarPage(
@@ -35,7 +38,10 @@ ui <- navbarPage(
   
   
   # Onglet “Analyse par Saison”
-  ui_analyse_saison(data_trains, annees_disponibles)
+  ui_analyse_saison(data_trains, annees_disponibles),
+  
+  # Onglet “Causes”
+  ui_analyse_causes(data_trains, annees_disponibles)
 )
 
 # 4) Serveur
@@ -86,6 +92,16 @@ server <- function(input, output, session) {
         )
       ) %>%
       arrange(Gare)
+  })
+  output$titre_graph_causes <- renderUI({
+    div(class = "graph-title",
+        paste0("Graphique : Proportion des retards par cause – Année ", input$annee_cause)
+    )
+  })
+  
+  output$plot_causes <- renderPlotly({
+    names(data_trains)
+    ggplotly(make_causes_plot(data_trains, input$annee_cause))
   })
   
 }
