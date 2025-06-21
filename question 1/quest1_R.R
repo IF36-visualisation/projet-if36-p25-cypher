@@ -36,9 +36,21 @@ retards_mensuels <- data_trains %>%
 
 #Nombre total de trains
 retards_mensuels <- retards_mensuels %>%
+  filter(Year == annee) %>%
+  group_by(Year, Month) %>%
+  summarise(
+    nb_total     = sum(Number_of_expected_circulations, na.rm = TRUE), #pour enlever l'aléatoire
+    nb_annules   = sum(Number_of_cancelled_trains,      na.rm = TRUE), #pour enlever l'aléatoire
+    retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
+    retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
+    retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
   mutate(
+    date = as.Date(sprintf("%d-%02d-01", Year, Month)),
     total_retards = retard_15min + retard_30min + retard_60min,
-    total_trains = total_retards + sample(8000:12000, n(), replace = TRUE),
+    #total_trains = total_retards + sample(8000:12000, n(), replace = TRUE), #fonction aléatoire remove en commentaire
+    total_trains = nb_total - nb_annules,
     a_lheure = total_trains - total_retards,
     pct_retards = round(100 * total_retards / total_trains, 1),
     tooltip_global = paste0(
@@ -50,6 +62,12 @@ retards_mensuels <- retards_mensuels %>%
       "<b>Trains en retard :</b> ", total_retards, " trains<br>",
       "<b>Soit </b>", pct_retards, "% des trains"
     )
+  ) %>%
+  arrange(date) %>%
+  mutate(
+    cumul_60 = retard_60min,
+    cumul_30 = cumul_60 + retard_30min,
+    cumul_15 = cumul_30 + retard_15min
   )
 
 # Calcul des couches empilées inversées
