@@ -121,11 +121,11 @@ server <- function(input, output, session) {
   })
   
   output$carte_ete <- renderLeaflet({
-    make_carte_saison(data_trains, "Été", input$annee_carte, gare_coords)
+    make_cartes_saisons(data_trains, input$annee_carte, gare_coords)$ete
   })
   
   output$carte_hiver <- renderLeaflet({
-    make_carte_saison(data_trains, "Hiver", input$annee_carte, gare_coords)
+    make_cartes_saisons(data_trains, input$annee_carte, gare_coords)$hiver
   })
 }
 # 5) Lancer l’application
