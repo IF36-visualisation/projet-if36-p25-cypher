@@ -192,9 +192,9 @@ Ce graphique permet d’obtenir une <b>vision de la répartition des durées de 
 
 ## Temps de trajet moyen par gares
 
-<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">
-  <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-```{r echo = FALSE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; margin: auto;">
+  <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; overflow: visible">
+```{r echo = FALSE, warning=FALSE, message=FALSE, fig.width=8, fig.height=4}
 
 library(dplyr)
 library(ggplot2)
@@ -211,7 +211,7 @@ top_gares_2019 <- data_2019 %>%
   arrange(desc(mean_travel_time_hr)) %>%
   slice(1:20)
 
-# 3. Faire le graphique avec les étiquettes au bout des barres
+
 ggplot(top_gares_2019, aes(x = reorder(Departure_station, mean_travel_time_hr), y = mean_travel_time_hr, fill = mean_travel_time_hr)) +
   geom_col() +
   geom_text(aes( y = mean_travel_time_hr - 0.1,label = round(mean_travel_time_hr, 1)),   # Ajout des étiquettes arrondies à 1 décimale
@@ -235,8 +235,8 @@ ggplot(top_gares_2019, aes(x = reorder(Departure_station, mean_travel_time_hr), 
     axis.title.x = element_text(size = 12, face = "bold"),
     axis.title.y = element_text(size = 12, face = "bold"),
     axis.line = element_line(color = "black"),
-    plot.margin = margin(1, 1, 1, 3),  # Ajoute de l'espace à gauche pour les étiquettes
-    legend.position = "none"   # <-- Ici on supprime la légende
+    plot.margin = margin(1, 1, 1, 3), 
+    legend.position = "none"   
   )
 
 
@@ -524,6 +524,7 @@ Seul le croisement avec la <b>fréquentation</b> permet de poser un diagnostic f
   <div class="card-header">Bilan</div>
   <div class="card-body">
 <p align="justify"> En particulier, l’analyse croisée entre le <b>nombre total de trains en retard</b> et leur <b>taux rapporté au trafic</b> nous a permis de mettre en lumière des différences intéressantes : certaines gares comme Paris Montparnasse ou Lyon Part-Dieu enregistrent un volume important de retards, mais cela reste proportionnel à leur forte fréquentation. À l’inverse, d’autres gares moins fréquentées affichent un <b>taux de retard plus élevé</b>, ce qui peut les rendre intéressantes à analyser plus en détail. </p> <p align="justify"> Nous allons désormais nous intéresser à un autre facteur potentiel d’explication : <b>l’influence du mois ou de la période de l’année</b> sur le nombre de retards constatés. L’objectif est de voir s’il existe des <b>périodes spécifiques où les retards sont plus fréquents</b>, ce qui pourrait nous aiguiller sur des causes saisonnières, structurelles ou événementielles. </p>
+ </div>
 </div>
 
 # Évolution des retards dans le temps
@@ -1378,7 +1379,6 @@ Cela permettra de **confirmer ou nuancer** les tendances mises en évidence ici.
 
 On voudrait voir si les conditions météoroligues (chaleur intense, ou neige) peuvent impacter les retards des trains en fonction de la posisition géographique des villes. Evidemment il faut aussi prendre en compte que les périodes choisies, été et hiver, sont très différentes en terme de trafic. Il y bien plus de voyage en train en été qu'en hiver, ce qui peut influer aussi. Dans tous les cas, nous nous attendons à voir une différence notable du retard moyen entre été et hiver en fonction des régions. Par exemple, nous pensons que les régions des Alpes seront potentiellement plus impactées par les périodes hivernales, dues à des chutes de neige, tandis que les régions du sud peuvent être plus impactées en été, a cause des fortes chaleurs, et des affluences plus importantes. 
 
-
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
 library(dplyr)
 library(leaflet)
@@ -1457,22 +1457,26 @@ carte_hiver <- leaflet(retards_hiver) %>%
   addLegend("bottomleft", pal = pal, values = ~avg_delay,
             title = "Retard moyen",
             labFormat = labelFormat(suffix = " min"))
+
+
 div(
   style = "display: flex; gap: 20px;",
-  div(style = "width: 50%;",
-    tags$h4("Retard moyen en été 2019"),
+  div(style = "width: 50%; position: relative",
+    tags$h4("Retard moyen en été"),
     carte_ete
     ),
-  div(style = "width: 50%;",
-      tags$h4("Retard moyen en hiver 2019"),
+  div(style = "width: 50%; position: relative",
+      tags$h4("Retard moyen en hiver"),
       carte_hiver)
 )
 
 
 ```
 
-
-Sur les cartes, on peut valider une partie des hypothèses émises précedemment: 
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header">Interprétation</div>
+  <div class="card-body">
+  Sur les cartes, on peut valider une partie des hypothèses émises précedemment: 
 
 - En été, les gares du sud de la france, ainsi que celle de Valence TGV sont les gares avec les retards moyen les plus importants, la ou en hiver elles font partie de celles avec les retards les plus faibles. Valence est une gare de transit vers le sud de la France, ce qui corrobore l'idée qu'il y a une plus forte affluence dans le sud de la France en été. Cepandant, pour les gares du sud, on peut imaginer que le retard moyen augmente a cause de fortes chaleurs, ce qui peut causer des disfonctionnements techniques, ou provoquer des malaises chez les passagers. 
 
@@ -1486,6 +1490,9 @@ Cependant, des phénomènes que nous n'avions pas prévus apparaissent clairemen
   
 Il est dur d'affirmer et de généraliser la cause de cette différence de retard moyen entre été et hiver par région géographique. Pour certaines d'entre elles, comme les Alpes, le Nord de la France et le Sud, cela peut être le cas, mais pour le reste trop de paramètre peuvent être pris en compte. 
 Cette visualisation permet de confirmer quelques hypothèses, mais nuance aussi les aprioris que nous avions. 
+</div>
+</div
+
 
 # Analyse des causes de retard
 

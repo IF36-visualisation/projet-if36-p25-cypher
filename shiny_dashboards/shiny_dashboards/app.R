@@ -24,6 +24,10 @@ source("rubrique_saison/ui_analyse_saison.R")
 source("rubrique_causes/ui_analyse_causes.R")
 source("rubrique_causes/plot_causes.R")
 #-------------------------------------
+source("rubrique_cartes/ui_cartes.R")
+source("rubrique_cartes/carte_saisons.R")
+gare_coords <- read_csv("../../data/gares_coords.csv")
+#-------------------------------------
 
 # 3) Définir l'UI principal
 ui <- navbarPage(
@@ -41,7 +45,10 @@ ui <- navbarPage(
   ui_analyse_saison(data_trains, annees_disponibles),
   
   # Onglet “Causes”
-  ui_analyse_causes(data_trains, annees_disponibles)
+  ui_analyse_causes(data_trains, annees_disponibles),
+  
+  # Onglet “Cartes”
+  ui_cartes(data_trains, annees_disponibles),
 )
 
 # 4) Serveur
@@ -104,6 +111,22 @@ server <- function(input, output, session) {
     ggplotly(make_causes_plot(data_trains, input$annee_cause))
   })
   
+  # Cartes été - hiver
+  output$titre_carte_ete <- renderUI({
+    h3(paste("Carte des retards moyens en été – Année", input$annee_carte))
+  })
+  
+  output$titre_carte_hiver <- renderUI({
+    h3(paste("Carte des retards moyens en hiver – Année", input$annee_carte))
+  })
+  
+  output$carte_ete <- renderLeaflet({
+    make_carte_saison(data_trains, "Été", input$annee_carte, gare_coords)
+  })
+  
+  output$carte_hiver <- renderLeaflet({
+    make_carte_saison(data_trains, "Hiver", input$annee_carte, gare_coords)
+  })
 }
 # 5) Lancer l’application
 shinyApp(ui = ui, server = server)
