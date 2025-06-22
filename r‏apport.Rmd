@@ -16,6 +16,16 @@ output:
 
 ![](imgsncf.png)
 
+```{r setup-css, echo=FALSE, results='asis'}
+cat("
+<style>
+.leaflet-control.legend.custom-legend .legend-labels {
+  margin-left: 30px !important;
+}
+</style>
+")
+```
+
 # Introduction 
 
 <div class="card border-primary mb-3"style="font-size: 1.3rem;">
@@ -1440,7 +1450,8 @@ carte_ete <- leaflet(retards_ete) %>%
   ) %>%
   addLegend("bottomleft", pal = pal, values = ~avg_delay,
             title = "Retard moyen",
-            labFormat = labelFormat(suffix = " min"))
+            labFormat = labelFormat(suffix = " min"), 
+            className = "custom-legend")
 
 # Carte hiver
 carte_hiver <- leaflet(retards_hiver) %>%
@@ -1456,7 +1467,8 @@ carte_hiver <- leaflet(retards_hiver) %>%
   ) %>%
   addLegend("bottomleft", pal = pal, values = ~avg_delay,
             title = "Retard moyen",
-            labFormat = labelFormat(suffix = " min"))
+            labFormat = labelFormat(suffix = " min"),
+            className = "custom-legend")
 
 
 div(
