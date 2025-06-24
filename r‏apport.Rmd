@@ -1904,7 +1904,7 @@ p
 <div class="card text-white bg-success mb-3">
   <div class="card-header">Bilan</div>
   <div class="card-body">
-    <p>Au terme de cette analyse, rappelons les trois grandes questions qui ont guidé notre exploration :</p>
+  <p>Au terme de cette analyse, rappelons les trois grandes questions qui ont guidé notre exploration :</p>
 
   <ul>
     <li><b>Comment la ponctualité évolue-t-elle au fil des mois ?</b></li>
@@ -1917,7 +1917,7 @@ p
   <p>Cependant, certaines tendances se dégagent : les <b>mois de mai, juin, juillet et août</b> présentent régulièrement des pics de retard, ce qui suggère une <b>accumulation des retards au printemps et en été</b>. Ces périodes coïncident avec les <i>ponts du mois de mai</i> et les <i>vacances estivales</i>, deux moments où l’affluence sur le réseau est particulièrement élevée.</p>
 
    <p>Enfin, les heatmaps révèlent que les retards sont principalement concentrés dans les <b>grandes gares parisiennes</b> (Montparnasse, Lyon, Est), ce qui s’explique par leur rôle central dans le réseau ferroviaire national. Ces gares, véritables nœuds de correspondance, sont plus exposées aux effets de saturation, aux correspondances multiples, et aux retards en cascade.</p>
-    <p>Ce bilan met en lumière des <b>axes ferroviaires particulièrement sensibles</b>, notamment entre Paris et les grandes métropoles régionales, et ouvre la voie à des analyses plus fines sur les causes sous-jacentes de ces retards.</p>
+  <p>Ce bilan met en lumière des <b>axes ferroviaires particulièrement sensibles</b>, notamment entre Paris et les grandes métropoles régionales, et ouvre la voie à des analyses plus fines sur les causes sous-jacentes de ces retards.</p>
   </div>
 </div>
 
@@ -2110,11 +2110,8 @@ p
 ```
 </div>
 </div>
-
-<div class="card text-white bg-primary mb-3">
-  <div class="card-header">Interprétation</div>
-  <div class="card-body">
-   Ce graphique représente la proportion de cause des retards référencés dans le dataset. Ces causes sont divisées en plusieurs catégories : 
+<p align = "justify">
+  Ce graphique représente la proportion de cause des retards référencés dans le dataset. Ces causes sont divisées en plusieurs catégories : 
 
 - les causes externes (par exemple le temps, les obstacles sur la voie ou des actions malveillantes)
 - l'infrastructure ferroviaire (par exemple pendant des travaux de maintenance)
@@ -2122,13 +2119,14 @@ p
 - le matériel roulant (par exemple lors d'une panne ou d'une anomalie sur la rame)
 - le retard en station (par exemple sur la réutilisation du matériel)
 - le retard du aux voyageurs (par exemble au moment de l'embarcation)
+</p>
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header">Interprétation</div>
+  <div class="card-body">
+<p>
+L’analyse des causes permet de constater qu’<b>environ 50 % des retards sont systématiquement dus au matériel roulant et à l’infrastructure ferroviaire</b>. Ce constat peut s’expliquer par l’<b>ancienneté du réseau ferroviaire français</b>, dont une grande partie des installations date de plus de 50 ans. Cette vétusté engendre mécaniquement des pannes, des ralentissements, voire des interruptions de circulation, rendant ces deux facteurs structurellement dominants dans les causes de retard.
+</p>
 
-On peut voir que les causes de retard les plus fréquentes sont celles liées à **l'extérieur** et celles liées à **l'infrastructure ferroviaire**, à respectivement **27%** et **26%** environ. 
-Les retards dûs aux **voyageurs** en eux-mêmes sont beaucoup moins fréquents, n'atteignant pas **4%** des retards renseignés dans le dataset.
-<br>
-On peut alors se dire que la majorité des retards ne sont pas du ressort de la SNCF, ou alors peuvent être anticipés avec ceux dûs à l'infrastructure ferroviaire. Toutefois, ces données peuvent ne pas être uniformes et changer selon plusieurs paramètres, ce qui pourrai
-changer certaines choses, dans le cas où la SNCF a des périodes de travaux préférées par exemple.
-    </p>
   </div>
 </div>
 
@@ -2313,14 +2311,13 @@ trajets %>%
 <div class="card-header">Interprétation</div>
 <div class="card-body">
 <p>
-Tendance générale : la droite de régression montre une légère pente positive ; plus le trajet est long, plus le retard moyen tend à augmenter, mais l’effet reste modéré.<br>
-Niveau des retards : l’immense majorité des points se situent sous les 20 minutes de retard, quels que soient les trajets.<br>
-Trajets courts (moins de 60 min): fortement concentrés autour de retards très faibles (moins de  10 min), illustrés par les points jaune-orangés à gauche.<br>
-Trajets moyens (≈ 60-250 min): dispersion plus large ; quelques trajets présentent des retards notables (jusqu’à 80 min), mais cela reste des cas isolés.<br>
-Trajets longs (plus de 250 min): les points violets indiquent une légère hausse de retard médian ; néanmoins, la plupart demeurent sous les 20 min, signe d’une ponctualité globalement maîtrisée même sur les longues distances.<br>
-Corrélation faible: la faible pente et la grande dispersion autour de la droite traduisent une corrélation modeste ; la durée du trajet n’explique qu’une petite part de la variabilité des retards.<br>
-Valeurs extrêmes : quelques outliers (retards &gt; 60 min) existent, mais ils ne modifient pas sensiblement la tendance générale.
-    </p>
+L’analyse du nuage de points entre la durée des trajets et le retard moyen met en évidence une <b>tendance générale modérée</b> : la droite de régression présente une <b>légère pente positive</b>, ce qui suggère qu’<b>un allongement de la durée du trajet s’accompagne d’une augmentation modeste du retard moyen</b>. Toutefois, cette corrélation demeure <b>faible</b>, comme en témoigne la grande dispersion des points autour de la droite.
+
+On observe que <b>la majorité des trajets, quelle que soit leur durée, présentent des retards inférieurs à 20 minutes</b>, ce qui traduit une <b>ponctualité globalement bien maîtrisée</b>. Les <b>trajets courts (moins de 60 minutes)</b> sont particulièrement réguliers, avec des retards très faibles (<10 min), tandis que les <b>trajets moyens (60 à 250 minutes)</b> montrent une plus grande variabilité, bien que les cas extrêmes restent rares. Pour les <b>trajets longs (>250 minutes)</b>, une légère hausse du retard médian est perceptible, sans que cela ne compromette significativement la régularité globale.
+
+Enfin, la présence de <b>quelques valeurs extrêmes</b> (retards supérieurs à 60 minutes) ne remet pas en cause la tendance principale et souligne que <b>la durée du trajet n’est qu’un facteur partiel parmi d’autres dans l’explication des retards</b>.
+</p>
+
   </div>
 </div>
 
@@ -2388,13 +2385,15 @@ ggplot(
 <div class="card-header">Interprétation</div>
 <div class="card-body">
 <p>
+La <b>ligne pointillée rouge</b> représente la <b>médiane globale des retards</b>, située autour de <b>cinq minutes</b>. Pour les <b>trajets courts</b> (jusqu’à 90 minutes), la médiane spécifique à chaque tranche reste <b>proche ou inférieure à cette valeur de référence</b> et la <b>dispersion est très faible</b>, traduisant une <b>ponctualité remarquable</b> sur ces segments.
 
-La ligne pointillée rouge correspond à la médiane globale du retard, environ cinq minutes. Pour les trois premières tranches, jusqu’à quatre-vingt-dix minutes de voyage, la médiane propre à chaque boîte est proche ou inférieure à cette référence et la dispersion reste très limitée, signe d’une excellente ponctualité pour les trajets courts.<br>
-Entre quatre-vingt-dix et deux cent quarante minutes, la médiane de chaque boîte progresse doucement tandis que l’étendue interquartile s’élargit. Malgré quelques valeurs extrêmes isolées qui grimpent jusqu’à trente, voire quatre-vingts minutes, la majorité des trains restent groupés sous quinze minutes de retard.<br>
-À partir de deux cent quarante minutes, la médiane dépasse régulièrement la ligne de référence et la variabilité augmente encore. Les tranches comprises entre deux cent soixante-dix et trois cent trente minutes affichent la dispersion la plus forte et des retards médians autour de huit à dix minutes. Pour la dernière tranche, trois cent soixante à trois cent quatre-vingt-dix minutes, la médiane retombe légèrement, sans doute faute d’effectifs importants.<br>
-Dans l’ensemble, la relation entre durée et retard est positive mais modérée : un trajet plus long accroît légèrement le retard médian, mais, toutes durées confondues, la moitié des services continuent d’arriver avec moins de dix minutes de retard.
+Entre <b>90 et 240 minutes</b>, on observe une <b>progression graduelle de la médiane</b> et un <b>élargissement de l’intervalle interquartile</b>. Quelques <b>valeurs extrêmes</b> apparaissent (jusqu’à 30 voire 80 minutes), mais la <b>grande majorité des retards reste concentrée sous les 15 minutes</b>.
 
+Au-delà de <b>240 minutes</b>, la médiane dépasse de manière plus systématique la ligne de référence et la <b>variabilité devient plus marquée</b>. Les tranches comprises entre <b>270 et 330 minutes</b> affichent la plus forte dispersion, avec des <b>retards médians autour de 8 à 10 minutes</b>. Pour la dernière tranche (360 à 390 minutes), la médiane <b>diminue légèrement</b>, probablement en raison d’un <b>nombre plus faible d’observations</b>.
+
+En résumé, la relation entre <b>durée du trajet et retard</b> est <b>légèrement positive</b> : un voyage plus long est associé à une légère hausse du retard médian. Toutefois, <b>la moitié des trains, toutes durées confondues, continuent d’arriver avec moins de 10 minutes de retard</b>, ce qui témoigne d’une <b>maîtrise globale des délais</b>.
 </p>
+
 </div>
 </div>
 
@@ -2412,7 +2411,7 @@ Dans l’ensemble, la relation entre durée et retard est positive mais modéré
   Pour visualiser correctement l’application, il est recommandé de cliquer sur le bouton <b>“Open in Browser”</b> (ouvrir dans le navigateur) si elle ne s’affiche pas localement dans le viewer RStudio.
 </p>
 <p>
-      Si l’affichage échoue, une version statique est fournie dans le dépôt GitHub, dans le fichier <code>data/rapport/SHINY.pdf</code> contenant des captures d’écran détaillées. Un bouton est également disponible dans le document pour accéder directement au site en ligne.
+      Si l’affichage échoue, une version statique est fournie dans le dépôt GitHub, dans le fichier <code>data/rapport/Shiny_screenshots</code> contenant des captures d’écran détaillées. Un bouton est également disponible dans le document pour accéder directement au site en ligne.
 </p>
 </div>
 </div>
