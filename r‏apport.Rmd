@@ -252,7 +252,7 @@ Ce graphique permet d’obtenir une <b>vision de la répartition des durées de 
 
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; margin: auto;">
   <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; overflow: visible">
-```{r echo = FALSE, warning=FALSE, message=FALSE, fig.width=8, fig.height=4}
+```{r echo = FALSE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
 
 library(dplyr)
 library(ggplot2)
@@ -1904,7 +1904,18 @@ p
 <div class="card text-white bg-success mb-3">
   <div class="card-header">Bilan</div>
   <div class="card-body">
-<p align="justify"> En particulier, l’analyse croisée entre le <b>nombre total de trains en retard</b> et leur <b>taux rapporté au trafic</b> nous a permis de mettre en lumière des différences intéressantes : certaines gares comme Paris Montparnasse ou Lyon Part-Dieu enregistrent un volume important de retards, mais cela reste proportionnel à leur forte fréquentation. À l’inverse, d’autres gares moins fréquentées affichent un <b>taux de retard plus élevé</b>, ce qui peut les rendre intéressantes à analyser plus en détail. </p> <p align="justify"> Nous allons désormais nous intéresser à un autre facteur potentiel d’explication : <b>l’influence du mois ou de la période de l’année</b> sur le nombre de retards constatés. L’objectif est de voir s’il existe des <b>périodes spécifiques où les retards sont plus fréquents</b>, ce qui pourrait nous aiguiller sur des causes saisonnières, structurelles ou événementielles. </p>
+<p align="justify"> Au terme de cette analyse, rappelons les trois grandes questions qui ont guidé notre exploration :<br>
+
+<ul> <li><b>Comment la ponctualité évolue-t-elle au fil des mois ?</b></li> <li><b>Y a-t-il des saisons où les retards sont plus fréquents ?</b></li> <li><b>Peut-on identifier des flux ferroviaires particulièrement sensibles ?</b></li> </ul>
+Les résultats obtenus montrent qu’il n’existe <b>pas de pattern cyclique strict</b> dans l’évolution mensuelle de la ponctualité. Au contraire, on observe <b>une variabilité constante</b> d’une année à l’autre, sans saisonnalité parfaitement récurrente.
+
+Cependant, certaines tendances se dégagent : les <b>mois de mai, juin, juillet et août</b> présentent régulièrement des pics de retard, ce qui suggère une <b>accumulation des retards au printemps et en été</b. Ces périodes coïncident avec les <i>ponts du mois de mai</i> et les <i>vacances estivales</i>, deux moments où l’affluence sur le réseau est particulièrement élevée.
+
+Enfin, les heatmaps révèlent que les retards sont principalement concentrés dans les <b>grandes gares parisiennes</b> (Montparnasse, Lyon, Est), ce qui s’explique par leur rôle central dans le réseau ferroviaire national. Ces gares, véritables nœuds de correspondance, sont plus exposées aux effets de saturation, aux correspondances multiples, et aux retards en cascade.
+
+Ce bilan met en lumière des <b>axes ferroviaires particulièrement sensibles</b>, notamment entre Paris et les grandes métropoles régionales, et ouvre la voie à des analyses plus fines sur les causes sous-jacentes de ces retards.
+
+ </p>
  </div>
 </div>
 ---
@@ -2043,7 +2054,7 @@ Nous voulons savoir quelle sont les principales causes de retard. Pour cela, nou
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
 
-```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+```{r echo=FALSE, fig.width=6, fig.height=4, message=FALSE, warning=FALSE}
 
 data_trains <- data_trains %>% 
   rename(
@@ -2085,8 +2096,7 @@ p <- ggplot(proportion_retards, aes(
   scale_y_continuous(breaks = seq(0, 30, by = 4),
                      labels = label_percent(scale = 1))
 
-p <- ggplotly(p, tooltip = "text")
-save_plotly(p)
+p
 ```
 </div>
 </div>
@@ -2118,7 +2128,7 @@ Nous avons maintenant une certaine idée de la proportion de chaque cause, mais 
 
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+```{r echo=FALSE, fig.width=6, fig.height=4, message=FALSE, warning=FALSE}
 library(plotly)
 library(scales)
 
@@ -2148,9 +2158,7 @@ p <- ggplot(proportion_mois, aes(x = Month, y = moyenne, fill = cause, text = te
   scale_x_continuous(breaks = 1:12, labels = month.abb) +
   scale_y_continuous(labels = label_percent(scale = 1))  # % seulement sur l'axe
 
-p <- ggplotly(p, tooltip = "text")
-
-save_plotly(p)
+p
 ```
 </div>
 </div>
@@ -2168,12 +2176,6 @@ On peut alors voir que les proportions restent **sensiblement les même pour la 
 - Aux mois de **juillet et aout**, les **retards liés aux passagers** sont **plus importants** qu'aux autres mois. Cela peut être dû à la forte affluence amenée par les vacances d'été, entraînant des problèmes d'organisation.
   </div>
 </div>
-### Explication du graphe
-
-
-
-### Observations et hypothèses
-
 
 
 ## Certaines causes sont-elles plus fréquentes selon les stations ?
@@ -2216,11 +2218,15 @@ save_plotly(p_interactif)
 </div>
 </div>
 
-### Explication du graphe
+<p align="justify">
 
 Ce graphique, sous forme de **heatmap**, décrit les proportions de causes de retard des trains selon les **stations de départ**. Plus la proportion d'une cause de retard est grande, plus la case correspondante tend vers le rouge foncé.
+</p>
 
-### Observations et hypothèses
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">Interprétation</div>
+<div class="card-body">
+<p class="card-text">
 
 On peut alors voir que les proportions restent **sensiblement les même pour la plupart** pour chaque station, mais on observe tout de même des **disparités notables** dans certains cas :
 
@@ -2228,13 +2234,26 @@ On peut alors voir que les proportions restent **sensiblement les même pour la 
 
 - On observe une **plus grande proportion** de retard à cause de **l'infrastructure ferroviaire au Mans, à Angoulême, à Poitiers ou encore à Angers**. On peut alors supposer, puisque les villes sont plus ou moins proches les unes des autres, que ces travaux de maintenance on eu lieu sur les mêmes infrastructures.
 
-## Conclusion question cause des retards
+</p>
+</div>
+</div>
 
+## Bilan des Causes de Retards
+
+<div class="card text-white bg-success mb-3">
+  <div class="card-header">Bilan</div>
+  <div class="card-body">
+<p align="justify"> 
 On a donc appris que les causes de retard les plus fréquentes étaient les causes extérieures et l'infrastructure ferroviaire. Malgré cette tendance remarquée, ces causes peuvent varier selon le temps et les stations concernées.
+</p>
+ </div>
+</div>
+
+
 
 ## Les longs trajets sont-ils plus souvent en retard ?
 
-### Objectif
+
 
 Nous examinons la relation entre la **durée moyenne** d’un trajet et le **retard moyen à l’arrivée**
 Deux approches : 
@@ -2242,15 +2261,16 @@ Deux approches :
 - Scatterplot
 - Boxplot
 
-```{r, echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 trajets <- data_trains
 library(viridis)
 library(stringr)
 ```
 
 
-
-```{r, echo=FALSE}
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
+<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=4}
 trajets %>% 
   filter(
     !is.na(Average_travel_time),
@@ -2274,7 +2294,8 @@ trajets %>%
   ) +
   theme_minimal(base_size = 13)
 ```
-
+</div>
+</div>
 
   
 <div class="card text-white bg-primary mb-3">
@@ -2292,8 +2313,9 @@ Valeurs extrêmes : quelques outliers (retards &gt; 60 min) existent, mais ils n
   </div>
 </div>
 
-
-```{r, echo=FALSE}
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
+<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+```{r, echo=FALSE, fig.width=6, fig.height=4}
 df <- trajets %>% 
   filter(
     !is.na(Average_travel_time),
@@ -2348,6 +2370,9 @@ ggplot(
     panel.grid.minor.x = element_blank()
   )
 ```
+</div>
+</div>
+
 <div class="card text-white bg-primary mb-3">
 <div class="card-header">Interprétation</div>
 <div class="card-body">
