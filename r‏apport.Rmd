@@ -135,6 +135,8 @@ data_NA <- data_trains[apply(data_trains, 1, function(x) any(is.na(x))), ]
 </div>
 </div>
 
+## Les données du dataset
+
 <div class="card border-primary mb-3"style="font-size: 1.3rem;">
   <div class="card-header">Données</div>
   <div class="card-body">
@@ -157,6 +159,26 @@ Station_shapefiles.shp : géométrie des arrêts <BR>
 Station_shapefiles.dbf : attributs (noms, codes, types) <BR>
 Station_shapefiles.shx, .prj, .cpg : métadonnées, projection, encodage <BR>
 </p> 
+
+</div>
+</div>
+
+## Les limites anticipées
+
+
+<div class="card border-primary mb-3"style="font-size: 1.3rem;">
+  <div class="card-header">Limites Anticipées</div>
+  <div class="card-body">
+
+<p align="justify"> 
+1. Limitation géographique : Paris et sa proche banlieue <BR>
+2. Faire attention au détail des métadonnées, notamment pour les causes d'incident <BR>
+3. Validations sur une periodicité plus courte que le premier dataset, uniquement 2019 <BR>
+4. Faire attention à l'agrégat qui pourrait masquer des variations intra-quotidiennes <BR>
+5. Mise en relation des deux csv : à priori, pas d'attribut commun <BR>
+6. Colonne de commentaires : informations utiles mais difficilement analysable et trop souvent nulles (77%) <BR>
+7. Colonne de nombre de validations : imprécision lorsque la valeur est en dessous de 5 (la valeur de la ligne est "less than 5", ce qui complique une conversion de la colonne en entier) <BR>
+</p>
 
 </div>
 </div>
