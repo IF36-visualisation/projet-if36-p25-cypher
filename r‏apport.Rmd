@@ -2445,6 +2445,17 @@ knitr::include_app(
 
 # Tableau
 
+## Exemple d'un graphique refait sous Tableau 
+
+<p align ="justify">
+Ce graphique est de base fait sous Shiny et a été entièrement reproduit sur Tableau, on peut voir les similitudes et les différences assez aisément, ils sont très proche en terme de résultat final.  
+</p>
+<div style="text-align:center;">
+<img src="data/rapport/tableau_graph1.png" style="border-radius: 8px; max-width: 50%; margin-bottom: 1rem;" alt="Graphique Tableau">
+</div>
+
+
+
 ## Version courte sous forme de tableau
 
 <div style="overflow-x:auto;">
