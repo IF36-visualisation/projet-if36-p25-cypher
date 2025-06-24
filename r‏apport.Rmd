@@ -2057,14 +2057,13 @@ Cette visualisation permet de confirmer quelques hypothèses, mais nuance aussi 
 # Analyse des causes de retard
 
 ## Quelles sont les principales causes de retard ?
-<p align ="justify">
 
 Nous voulons savoir quelle sont les principales causes de retard. Pour cela, nous calculons la moyenne pour chaque liaison de la proportion des causes.
 
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
 
-```{r echo=FALSE, fig.width=6, fig.height=4, message=FALSE, warning=FALSE}
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
 
 data_trains <- data_trains %>% 
   rename(
@@ -2106,12 +2105,16 @@ p <- ggplot(proportion_retards, aes(
   scale_y_continuous(breaks = seq(0, 30, by = 4),
                      labels = label_percent(scale = 1))
 
-p
+p <- ggplotly(p, tooltip = "text")
+save_plotly(p)
 ```
 </div>
 </div>
-<p align = "justify">
-  Ce graphique représente la proportion de cause des retards référencés dans le dataset. Ces causes sont divisées en plusieurs catégories : 
+
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header">Interprétation</div>
+  <div class="card-body">
+   Ce graphique représente la proportion de cause des retards référencés dans le dataset. Ces causes sont divisées en plusieurs catégories : 
 
 - les causes externes (par exemple le temps, les obstacles sur la voie ou des actions malveillantes)
 - l'infrastructure ferroviaire (par exemple pendant des travaux de maintenance)
@@ -2119,14 +2122,13 @@ p
 - le matériel roulant (par exemple lors d'une panne ou d'une anomalie sur la rame)
 - le retard en station (par exemple sur la réutilisation du matériel)
 - le retard du aux voyageurs (par exemble au moment de l'embarcation)
-</p>
-<div class="card text-white bg-primary mb-3">
-  <div class="card-header">Interprétation</div>
-  <div class="card-body">
-<p>
-L’analyse des causes permet de constater qu’<b>environ 50 % des retards sont systématiquement dus au matériel roulant et à l’infrastructure ferroviaire</b>. Ce constat peut s’expliquer par l’<b>ancienneté du réseau ferroviaire français</b>, dont une grande partie des installations date de plus de 50 ans. Cette vétusté engendre mécaniquement des pannes, des ralentissements, voire des interruptions de circulation, rendant ces deux facteurs structurellement dominants dans les causes de retard.
-</p>
 
+On peut voir que les causes de retard les plus fréquentes sont celles liées à **l'extérieur** et celles liées à **l'infrastructure ferroviaire**, à respectivement **27%** et **26%** environ. 
+Les retards dûs aux **voyageurs** en eux-mêmes sont beaucoup moins fréquents, n'atteignant pas **4%** des retards renseignés dans le dataset.
+<br>
+On peut alors se dire que la majorité des retards ne sont pas du ressort de la SNCF, ou alors peuvent être anticipés avec ceux dûs à l'infrastructure ferroviaire. Toutefois, ces données peuvent ne pas être uniformes et changer selon plusieurs paramètres, ce qui pourrai
+changer certaines choses, dans le cas où la SNCF a des périodes de travaux préférées par exemple.
+    </p>
   </div>
 </div>
 
@@ -2136,7 +2138,7 @@ Nous avons maintenant une certaine idée de la proportion de chaque cause, mais 
 
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-```{r echo=FALSE, fig.width=6, fig.height=4, message=FALSE, warning=FALSE}
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
 library(plotly)
 library(scales)
 
@@ -2166,7 +2168,9 @@ p <- ggplot(proportion_mois, aes(x = Month, y = moyenne, fill = cause, text = te
   scale_x_continuous(breaks = 1:12, labels = month.abb) +
   scale_y_continuous(labels = label_percent(scale = 1))  # % seulement sur l'axe
 
-p
+p <- ggplotly(p, tooltip = "text")
+
+save_plotly(p)
 ```
 </div>
 </div>
@@ -2182,14 +2186,15 @@ On peut alors voir que les proportions restent **sensiblement les même pour la 
 - On observe un **pic de retard** à cause de **l'infrastructure ferroviaire** en **avril et juin**. On peut alors supposer que la SNCF choisit ces dates pour entreprendre des travaux de maintenance. En effet, ces dates sont proches des vacances d'été et donc proches des fortes affluences qu'il faut préparer.
 
 - Aux mois de **juillet et aout**, les **retards liés aux passagers** sont **plus importants** qu'aux autres mois. Cela peut être dû à la forte affluence amenée par les vacances d'été, entraînant des problèmes d'organisation.
+
+- Egalement, on peut remarquer que les retards dûs aux causes matérielles et de retard en station ont la même proportion environ pour chaque mois. Les retards pour cause de gestion de trafic également, même si on peut voir une augmentation entre juin et juillet. Il est alors que 
+l'affluance des vacances d'été font que plus de trains sont mobilisés, et donc cela amène a plus de difficultés d'organisation.
   </div>
 </div>
 
-
 ## Certaines causes sont-elles plus fréquentes selon les stations ?
-<p align ="justify">
+
 La temporalité n'est pas le seul facteur qui pourrait influencer les causes de retard. En effet, celles-ci peuvent être influencées par l'emplacement de la gare, selon la météo ou la voirie à l'emplacement concerné par exemple.
-</p>
 
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
@@ -2227,33 +2232,38 @@ save_plotly(p_interactif)
 </div>
 </div>
 
-<p align ="justify">
-
-Ce graphique, sous forme de **heatmap**, décrit les proportions de causes de retard des trains selon les **stations de départ**. Plus la proportion d'une cause de retard est grande, plus la case correspondante tend vers le rouge foncé.
-</p>
-
 <div class="card text-white bg-primary mb-3">
-<div class="card-header">Interprétation</div>
-<div class="card-body">
-<p align ="justify">
-
+  <div class="card-header">Interprétation</div>
+  <div class="card-body">
+Ce graphique, sous forme de **heatmap**, décrit les proportions de causes de retard des trains selon les **stations de départ**. Plus la proportion d'une cause de retard est grande, plus la case correspondante tend vers le rouge foncé.
 On peut alors voir que les proportions restent **sensiblement les même pour la plupart** pour chaque station, mais on observe tout de même des **disparités notables** dans certains cas :
 
 - Les retards pour **causes extérieures** sont **plus fréquents** dans les villes de **Brest, Perpignan et Quimper**. Deux de ces villes étant en Bretagne, il est possible de se dire que le climat de la région amène à plus de retard.
 
 - On observe une **plus grande proportion** de retard à cause de **l'infrastructure ferroviaire au Mans, à Angoulême, à Poitiers ou encore à Angers**. On peut alors supposer, puisque les villes sont plus ou moins proches les unes des autres, que ces travaux de maintenance on eu lieu sur les mêmes infrastructures.
 
-</p>
-</div>
+- Les **villes parisiennes** observent **la plus grande proportion** de **retard en station**. Cela peut être expliqué par le fait que ces gares sont sujettes à un grand nombre d'arrivées et de départs, et avec la réutilisation de trains pour certaines lignes par exemple.
+
+- Pour ces mêmes gares, la proportion de retards pour **matériel roulant** est aussi notable, ce qui rejoint ce qu'on vient de dire par rapport à la réutilisation de rames par exemple
+  </div>
 </div>
 
-## Bilan des Causes de Retards
+## Bilan des causes de retards 
 
 <div class="card text-white bg-success mb-3">
   <div class="card-header">Bilan</div>
   <div class="card-body">
-<p align ="justify"> 
+<p align="justify"> 
 On a donc appris que les causes de retard les plus fréquentes étaient les causes extérieures et l'infrastructure ferroviaire. Malgré cette tendance remarquée, ces causes peuvent varier selon le temps et les stations concernées.
+<br>
+Les causes extérieures, souvent dûes à la météo, sont plus fréquentes lors des saisons plus froides et aux stations les plus exposées face à ce
+type de climat
+<br>
+Les périodes de vacances, surtout celles d'été, ont un impact remarquable sur certaines causes de retard, ce qui rejoint ce qu'on a vu précédemment
+<br>
+En règle générale, nous povons remarquer que les retards pour cause d'infrastructure ou de matériel roulant, combinés, occupent de manière constante près de la moitié des causes de retard. On pourrait alors se poser des questions sur tout le matériel appartenant à la SNCF.
+Ce matériel a bien entendu besoin de maintenance, mais pas. au point de compromettre autant la circulation du réseau. Par exemple, certaines
+rames roulent alors qu'elles ont plus de 50 ans. Cette vétusté engendre mécaniquement des pannes, des ralentissements, voire des interruptions de circulation, rendant ces deux facteurs structurellement dominants dans les causes de retard.
 </p>
  </div>
 </div>
