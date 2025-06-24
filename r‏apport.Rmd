@@ -2433,5 +2433,16 @@ knitr::include_app(
 </div>
 </div>
 
+# Tableau
+
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">Introduction à la comparaison de Tableau et Shiny (R)</div>
+<div class="card-body">
+<p class="card-text">
+Dans ce rapport, nous avons décidé de faire une comparaison approfondie entre les deux solutions de visualisation et d’exploitation de données : Tableau et Shiny (R).<br>
+Ces deux outils ont des approches opposées : Tableau est une solution dite « no-code », promettant une utilisation simple et intuitive pour des utilisateurs sans bagage technique préalable, tandis que Shiny est une solution « full code », nécessitant une maîtrise (au moins les bases) du langage R.
+</p>
+</div>
+</div>
 
 
