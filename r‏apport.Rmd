@@ -2655,4 +2655,183 @@ Le choix entre ces deux solutions dépendra donc des objectifs à long terme, du
 </p>
 </div>
 </div>
+# Bibliographie  
+<div style="overflow-x:auto;">
+  <table style="width:100%;border-collapse:collapse;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:0.92rem;">
+    <thead>
+      <tr>
+        <th style="background:linear-gradient(135deg,#007bff 0%,#6610f2 100%);color:#fff;text-align:center;padding:0.75rem;border:1px solid #dee2e6;white-space:nowrap;">Organisme&nbsp;/&nbsp;média</th>
+        <th style="background:linear-gradient(135deg,#007bff 0%,#6610f2 100%);color:#fff;text-align:center;padding:0.75rem;border:1px solid #dee2e6;">Lien cliquable</th>
+        <th style="background:linear-gradient(135deg,#007bff 0%,#6610f2 100%);color:#fff;text-align:center;padding:0.75rem;border:1px solid #dee2e6;">Date</th>
+        <th style="background:linear-gradient(135deg,#007bff 0%,#6610f2 100%);color:#fff;text-align:center;padding:0.75rem;border:1px solid #dee2e6;">Ce que la source éclaire</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">TF1&nbsp;Info</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.tf1info.fr/transports/video-reportage-retard-des-trains-tgv-intercites-transilien-ter-comment-la-sncf-minimise-leur-nombre-grace-a-une-methode-de-calcul-avantageuse-2308217.html" target="_blank">
+            Reportage&nbsp;: méthode de calcul avantageuse
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">11&nbsp;juil.&nbsp;2024</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Décrit les seuils 5/10/15&nbsp;min qui minimisent les retards, point soulevé dans notre rapport.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Vie-publique</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.vie-publique.fr/en-bref/296125-trains-et-avions-en-2023-une-ponctualite-degradee-pour-les-voyageurs" target="_blank">
+            Ponctualité dégradée pour les voyageurs
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">janv.&nbsp;2025</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Confirme la baisse de ponctualité observée depuis&nbsp;2019 dans nos analyses.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Le&nbsp;Monde</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.lemonde.fr/economie/article/2024/07/11/les-methodes-de-la-sncf-pour-camoufler-une-partie-de-ses-retards_6248470_3234.html" target="_blank">
+            Méthodes pour camoufler les retards
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">11&nbsp;juil.&nbsp;2024</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Corrobore le biais de calcul exposé dans l’étude.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Le&nbsp;Point</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.lepoint.fr/societe/comment-la-sncf-maquille-ses-statistiques-de-ponctualite-25-09-2023-2536789_23.php" target="_blank">
+            Comment la SNCF maquille sa ponctualité
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">25&nbsp;sept.&nbsp;2023</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Soutient la critique des chiffres officiels présentée dans le rapport.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">TF1&nbsp;Info</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.tf1info.fr/transports/video-tf1-pour-la-sncf-seul-1-train-sur-9-est-en-retard-vraiment-2308266.html" target="_blank">
+            «&nbsp;1&nbsp;train sur&nbsp;9&nbsp;en retard&nbsp;?&nbsp;»
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">juil.&nbsp;2024</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Illustre l’écart entre statistique et vécu voyageur mis en lumière dans nos conclusions.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Autorité&nbsp;de&nbsp;régu.&nbsp;des&nbsp;transports</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.autorite-transports.fr/actualites/publication-du-rapport-dactivite-2023-de-lautorite-de-regulation-des-transports/" target="_blank">
+            Rapport d’activité&nbsp;2023
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">févr.&nbsp;2024</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Sert de référentiel national pour comparer nos indicateurs de ponctualité.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Reporterre</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://reporterre.net/Un-TGV-au-dessus-du-vide-symbole-d-un-reseau-ferre-vulnerable-aux-intemperies" target="_blank">
+            Réseau ferré vulnérable aux intempéries
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">juil.&nbsp;2022</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Étaye la corrélation météo&nbsp;/ retards cartographiée dans le rapport.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">BFMTV</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <em>Plan canicule&nbsp;: pourquoi les TGV roulent moins vite (août&nbsp;2023)</em>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">août&nbsp;2023</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Explique la baisse de vitesse estivale, confirmant nos pics de retard saisonniers.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">SNCF&nbsp;(réseaux sociaux)</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">—</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">19&nbsp;mai&nbsp;2023</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Communiqué Ascension&nbsp;2023 sur trafic dense, apportant un exemple d’effet «&nbsp;week-end prolongé&nbsp;».
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Le&nbsp;Figaro</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.lefigaro.fr/conjoncture/greve-les-francais-commencent-a-en-avoir-ras-le-bol-de-ce-qu-il-se-passe-a-la-sncf-selon-le-ministre-de-transports-20250502" target="_blank">
+            Grève&nbsp;: lassitude des voyageurs
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">02&nbsp;mai&nbsp;2025</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Souligne l’impact des mouvements sociaux sur les retards, thème étudié dans notre analyse.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Le&nbsp;Parisien</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.leparisien.fr/economie/sncf-appel-a-la-greve-les-4-5-et-11-juin-preavis-pour-lete-les-prochaines-semaines-sannoncent-tendues-02-06-2025-SWJR7XORJFEK7MLFMK5MTHQN2A.php" target="_blank">
+            Appel à la grève&nbsp;: un été sous tension
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">02&nbsp;juin&nbsp;2025</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Anticipe les retards estivaux liés aux préavis, cohérent avec nos pics saisonniers.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">ART&nbsp;(PDF)</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://www.autorite-transports.fr/wp-content/uploads/2025/06/bilan-ferroviaire-france-2024_plaquette-a-mi-annee.pdf" target="_blank">
+            Bilan ferroviaire France&nbsp;2024 (mi-année)
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">juin&nbsp;2025</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Actualise les indicateurs nationaux utilisés comme référence dans nos comparaisons.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Rail&nbsp;du&nbsp;Sud (blog)</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://raildusud.canalblog.com/archives/2024/01/31/40185887.html" target="_blank">
+            Paris-Briançon&nbsp;: 9&nbsp;h et souvent en retard
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">31&nbsp;janv.&nbsp;2024</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Cas concret illustrant la faible corrélation durée&nbsp;/ retard évoquée dans nos graphiques.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Moselle&nbsp;TV</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          <a href="https://moselle.tv/la-sncf-est-elle-toujours-en-retard/" target="_blank">
+            La SNCF est-elle toujours en retard&nbsp;?
+          </a>
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">nov.&nbsp;2024</td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Met en avant pannes d’aiguillage et rails vétustes, confortant la part «&nbsp;infrastructure&nbsp;» dominante dans nos causes.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
 
