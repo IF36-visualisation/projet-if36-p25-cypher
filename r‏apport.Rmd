@@ -49,7 +49,7 @@ Ce dataset nous permet de **mieux comprendre** les dynamiques du réseau ferré 
 </div>
 # Contexte d'étude
 
-<p align="justify">
+<p align ="justify">
 
 ## Nettoyage du dataset
 
@@ -69,7 +69,7 @@ Nous avons également **supprimé les données concernant les gares étrangères
   <div class="card-header">Etapes</div>
   <div class="card-body">
 **1. Importation du fichier CSV**
-<p align="justify"> 
+<p align ="justify"> 
 Nous avons tout d'abord importé notre jeu de données à l'aide des librairies <b>dplyr</b> et <b>readr</b>. 
 </p>
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
@@ -82,7 +82,7 @@ data_trains <- read_csv("data/Train_dataset.csv")
 
 **2. Suppression de colonnes inutiles**
 
-<p align="justify"> 
+<p align ="justify"> 
 Certaines colonnes, contenant uniquement des commentaires textuels ("Comment (optional) delays at departure" et "Comment (optional) delays on arrival"), sont supprimées car elles ne sont pas pertinentes pour notre analyse. 
 </p>
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
@@ -93,7 +93,7 @@ data_trains <- data_trains %>%
 ```
 
 **3. Nettoyage des noms de colonnes**
-<p align="justify"> 
+<p align ="justify"> 
 Pour faciliter l'utilisation du dataset, nous avons standardisé les noms de colonnes : 
 <ul> <li>Suppression des parenthèses et de leur contenu</li> <li>Remplacement des espaces par des underscores <b>_</b></li> <li>Suppression des underscores inutiles en fin de nom</li> </ul> 
 </p>
@@ -105,7 +105,7 @@ names(data_trains) <- gsub("_$", "", names(data_trains))              # #Supprim
 ```
 
 **4. Suppression des gares étrangères**
-<p align="justify"> 
+<p align ="justify"> 
 Notre analyse portant exclusivement sur la France métropolitaine, nous avons filtré les données pour supprimer les trajets passant par certaines gares étrangères (Suisse, Allemagne, Italie, Espagne). 
 </p>
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
@@ -119,7 +119,7 @@ data_trains <- data_trains %>%
 ```
 
 **5. Analyse des données manquantes**
-<p align="justify"> 
+<p align ="justify"> 
 Enfin, nous avons calculé le nombre de lignes contenant au moins une valeur manquante (<b>NA</b>) pour évaluer la qualité globale du dataset : 
 </p>
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
@@ -141,17 +141,17 @@ data_NA <- data_trains[apply(data_trains, 1, function(x) any(is.na(x))), ]
   <div class="card-header">Données</div>
   <div class="card-body">
 **Ce dataset est composé de 7 fichiers issus de différentes sources publiques françaises.**
-<p align="justify"> 
+<p align ="justify"> 
 1. Regularities_by_liaisons_Trains_France.csv <BR>
 ➤ Données sur la ponctualité des trains par liaison (retards, annulations, régularité, etc.)
 </p>
 
-<p align="justify"> 
+<p align ="justify"> 
 2. Travel_titles_validations_in_Paris_and_suburbs.csv <BR>
 ➤ Nombre quotidien de validations de titres de transport (navigo, ticket) en Île-de-France 
 </p>
 
-<p align="justify"> 
+<p align ="justify"> 
 3. Shapefile des arrêts de transport (Station_shapefiles.*) <BR>
 Ensemble de 5 fichiers SIG permettant de visualiser les stations géolocalisées sur une carte : <BR>
 
@@ -170,7 +170,7 @@ Station_shapefiles.shx, .prj, .cpg : métadonnées, projection, encodage <BR>
   <div class="card-header">Limites Anticipées</div>
   <div class="card-body">
 
-<p align="justify"> 
+<p align ="justify"> 
 1. Limitation géographique : Paris et sa proche banlieue <BR>
 2. Faire attention au détail des métadonnées, notamment pour les causes d'incident <BR>
 3. Validations sur une periodicité plus courte que le premier dataset, uniquement 2019 <BR>
@@ -185,7 +185,7 @@ Station_shapefiles.shx, .prj, .cpg : métadonnées, projection, encodage <BR>
 
 # Exploration
 
-<p align="justify">
+<p align ="justify">
 Dans un premier temps, nous souhaitons obtenir une <b>vision globale des données</b>, afin d’identifier par exemple :
 <ul>
   <li>les <b>gares les plus importantes</b>, qui concentrent la majorité du trafic,</li>
@@ -232,7 +232,7 @@ ggplot(data_2019, aes(x = Average_travel_time)) +
 ```
 </div>
 </div>
-<p align="justify">
+<p align ="justify">
 <div class="card text-white bg-primary mb-3">
   <div class="card-header">Interprétation</div>
   <div class="card-body">
@@ -304,7 +304,7 @@ ggplot(top_gares_2019, aes(x = reorder(Departure_station, mean_travel_time_hr), 
 </div>
 
 
-<p align="justify">
+<p align ="justify">
 Ce graphique permet d’observer les <b>temps moyens de trajet en fonction des gares</b>. Cette information est importante pour la suite, car nous allons  chercher à <b>corréler les caractéristiques des gares avec les retards moyens</b>.
 
 Avoir cette visualisation dès maintenant nous permet de :
@@ -387,7 +387,7 @@ ggplot(frequentation_2019[1:20, ], aes(x = reorder(Station, total_freq), y = tot
 </div>
 
 
-<p align="justify">
+<p align ="justify">
 
 Nous avons choisi de travailler uniquement sur l’année <b>2019</b> pour éviter d’« écraser » des variations importantes comme celles dues à des <b>grèves</b> ou à la <b>crise sanitaire Covid-19</b>.  
 Cela nous permet d’obtenir une vision plus fidèle et réaliste du fonctionnement du réseau sur une année type.
@@ -551,7 +551,7 @@ ggplot(retards_top20, aes(x = Mois_annee, y = Departure_station, fill = total_re
 </div> 
 </div>
 
-<p align="justify">
+<p align ="justify">
 
 Ce double graphique présente deux lectures complémentaires du phénomène de retard ferroviaire sur les <b>20 gares les plus fréquentées</b> de France en <b>2019</b> :
 
@@ -581,7 +581,7 @@ Seul le croisement avec la <b>fréquentation</b> permet de poser un diagnostic f
 <div class="card text-white bg-success mb-3">
   <div class="card-header">Bilan</div>
   <div class="card-body">
-<p align="justify"> En particulier, l’analyse croisée entre le <b>nombre total de trains en retard</b> et leur <b>taux rapporté au trafic</b> nous a permis de mettre en lumière des différences intéressantes : certaines gares comme Paris Montparnasse ou Lyon Part-Dieu enregistrent un volume important de retards, mais cela reste proportionnel à leur forte fréquentation. À l’inverse, d’autres gares moins fréquentées affichent un <b>taux de retard plus élevé</b>, ce qui peut les rendre intéressantes à analyser plus en détail. </p> <p align="justify"> Nous allons désormais nous intéresser à un autre facteur potentiel d’explication : <b>l’influence du mois ou de la période de l’année</b> sur le nombre de retards constatés. L’objectif est de voir s’il existe des <b>périodes spécifiques où les retards sont plus fréquents</b>, ce qui pourrait nous aiguiller sur des causes saisonnières, structurelles ou événementielles. </p>
+<p> En particulier, l’analyse croisée entre le <b>nombre total de trains en retard</b> et leur <b>taux rapporté au trafic</b> nous a permis de mettre en lumière des différences intéressantes : certaines gares comme Paris Montparnasse ou Lyon Part-Dieu enregistrent un volume important de retards, mais cela reste proportionnel à leur forte fréquentation. À l’inverse, d’autres gares moins fréquentées affichent un <b>taux de retard plus élevé</b>, ce qui peut les rendre intéressantes à analyser plus en détail. </p> <p> Nous allons désormais nous intéresser à un autre facteur potentiel d’explication : <b>l’influence du mois ou de la période de l’année</b> sur le nombre de retards constatés. L’objectif est de voir s’il existe des <b>périodes spécifiques où les retards sont plus fréquents</b>, ce qui pourrait nous aiguiller sur des causes saisonnières, structurelles ou événementielles. </p>
  </div>
 </div>
 
@@ -809,7 +809,7 @@ fig
 ```
 </div>
 </div>
-<p align="justify">
+<p align ="justify">
 Ce graphique présente l'évolution mensuelle des retards de trains en France de **2015 à 2020**.  
 </p>
   <div style="text-align:center;">
@@ -1690,7 +1690,7 @@ p
 </div>
 </div>
 </div>
-<p align="justify">
+<p align ="justify">
 Ces graphique présentent la répartition des retards en évidence des saisons pour chaque année allant de 2015 à 2020 (on voit qu'on manque de données pour l'année 2020).
 Chaque saison est marquée par une **ligne verticale pointillée** et un **label** ("Hiver", "Printemps", "Été", "Automne").
 
@@ -1904,29 +1904,36 @@ p
 <div class="card text-white bg-success mb-3">
   <div class="card-header">Bilan</div>
   <div class="card-body">
-<p align="justify"> Au terme de cette analyse, rappelons les trois grandes questions qui ont guidé notre exploration :<br>
+    <p>Au terme de cette analyse, rappelons les trois grandes questions qui ont guidé notre exploration :</p>
 
-<ul> <li><b>Comment la ponctualité évolue-t-elle au fil des mois ?</b></li> <li><b>Y a-t-il des saisons où les retards sont plus fréquents ?</b></li> <li><b>Peut-on identifier des flux ferroviaires particulièrement sensibles ?</b></li> </ul>
-Les résultats obtenus montrent qu’il n’existe <b>pas de pattern cyclique strict</b> dans l’évolution mensuelle de la ponctualité. Au contraire, on observe <b>une variabilité constante</b> d’une année à l’autre, sans saisonnalité parfaitement récurrente.
+  <ul>
+    <li><b>Comment la ponctualité évolue-t-elle au fil des mois ?</b></li>
+      <li><b>Y a-t-il des saisons où les retards sont plus fréquents ?</b></li>
+      <li><b>Peut-on identifier des flux ferroviaires particulièrement sensibles ?</b></li>
+    </ul>
 
-Cependant, certaines tendances se dégagent : les <b>mois de mai, juin, juillet et août</b> présentent régulièrement des pics de retard, ce qui suggère une <b>accumulation des retards au printemps et en été</b. Ces périodes coïncident avec les <i>ponts du mois de mai</i> et les <i>vacances estivales</i>, deux moments où l’affluence sur le réseau est particulièrement élevée.
+  <p>Les résultats obtenus montrent qu’il n’existe <b>pas de pattern cyclique strict</b> dans l’évolution mensuelle de la ponctualité. Au contraire, on observe <b>une variabilité constante</b> d’une année à l’autre, sans saisonnalité parfaitement récurrente.</p>
 
-Enfin, les heatmaps révèlent que les retards sont principalement concentrés dans les <b>grandes gares parisiennes</b> (Montparnasse, Lyon, Est), ce qui s’explique par leur rôle central dans le réseau ferroviaire national. Ces gares, véritables nœuds de correspondance, sont plus exposées aux effets de saturation, aux correspondances multiples, et aux retards en cascade.
+  <p>Cependant, certaines tendances se dégagent : les <b>mois de mai, juin, juillet et août</b> présentent régulièrement des pics de retard, ce qui suggère une <b>accumulation des retards au printemps et en été</b>. Ces périodes coïncident avec les <i>ponts du mois de mai</i> et les <i>vacances estivales</i>, deux moments où l’affluence sur le réseau est particulièrement élevée.</p>
 
-Ce bilan met en lumière des <b>axes ferroviaires particulièrement sensibles</b>, notamment entre Paris et les grandes métropoles régionales, et ouvre la voie à des analyses plus fines sur les causes sous-jacentes de ces retards.
-
- </p>
- </div>
+   <p>Enfin, les heatmaps révèlent que les retards sont principalement concentrés dans les <b>grandes gares parisiennes</b> (Montparnasse, Lyon, Est), ce qui s’explique par leur rôle central dans le réseau ferroviaire national. Ces gares, véritables nœuds de correspondance, sont plus exposées aux effets de saturation, aux correspondances multiples, et aux retards en cascade.</p>
+    <p>Ce bilan met en lumière des <b>axes ferroviaires particulièrement sensibles</b>, notamment entre Paris et les grandes métropoles régionales, et ouvre la voie à des analyses plus fines sur les causes sous-jacentes de ces retards.</p>
+  </div>
 </div>
+
+
 ---
 
-# Impact des saisons et des conditions météorologiques 
+# Impact des saisons/conditions météorologiques 
 
-## Les conditions météorologiques extrêmes impactent-elles les retards moyens de train
+## Les conditions météorologiques extrêmes impactent-elles les retards moyens de train ?
 
-On voudrait voir si les conditions météoroligues (chaleur intense, ou neige) peuvent impacter les retards des trains en fonction de la posisition géographique des villes. Evidemment il faut aussi prendre en compte que les périodes choisies, été et hiver, sont très différentes en terme de trafic. Il y bien plus de voyage en train en été qu'en hiver, ce qui peut influer aussi. Dans tous les cas, nous nous attendons à voir une différence notable du retard moyen entre été et hiver en fonction des régions. Par exemple, nous pensons que les régions des Alpes seront potentiellement plus impactées par les périodes hivernales, dues à des chutes de neige, tandis que les régions du sud peuvent être plus impactées en été, a cause des fortes chaleurs, et des affluences plus importantes. 
+<p align ="justify">
+Nous souhaitons analyser si les conditions météorologiques (chaleur intense ou neige) peuvent avoir un impact sur les retards de trains en fonction de la position géographique des villes. Il est important de prendre en compte que les périodes étudiées, été et hiver, diffèrent fortement en termes de trafic : l’été connaît bien plus de déplacements en train que l’hiver, ce qui peut également influencer les résultats. Nous nous attendons néanmoins à observer une différence notable du retard moyen entre ces deux saisons selon les régions. Par exemple, nous supposons que les régions alpines sont potentiellement plus impactées par les conditions hivernales (notamment les chutes de neige), tandis que les régions du sud pourraient être davantage touchées en été, en raison des fortes chaleurs et d’une affluence plus importante.
+</p>
 
-```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+
+```{r echo=FALSE, fig.width=6, fig.height=4, message=FALSE, warning=FALSE}
 library(dplyr)
 library(leaflet)
 library(readr)
@@ -2025,6 +2032,7 @@ div(
 <div class="card text-white bg-primary mb-3">
   <div class="card-header">Interprétation</div>
   <div class="card-body">
+  <p> 
   Sur les cartes, on peut valider une partie des hypothèses émises précedemment: 
 
 - En été, les gares du sud de la france, ainsi que celle de Valence TGV sont les gares avec les retards moyen les plus importants, la ou en hiver elles font partie de celles avec les retards les plus faibles. Valence est une gare de transit vers le sud de la France, ce qui corrobore l'idée qu'il y a une plus forte affluence dans le sud de la France en été. Cepandant, pour les gares du sud, on peut imaginer que le retard moyen augmente a cause de fortes chaleurs, ce qui peut causer des disfonctionnements techniques, ou provoquer des malaises chez les passagers. 
@@ -2039,6 +2047,7 @@ Cependant, des phénomènes que nous n'avions pas prévus apparaissent clairemen
   
 Il est dur d'affirmer et de généraliser la cause de cette différence de retard moyen entre été et hiver par région géographique. Pour certaines d'entre elles, comme les Alpes, le Nord de la France et le Sud, cela peut être le cas, mais pour le reste trop de paramètre peuvent être pris en compte. 
 Cette visualisation permet de confirmer quelques hypothèses, mais nuance aussi les aprioris que nous avions. 
+</p>
 </div>
 </div>
 
@@ -2048,6 +2057,7 @@ Cette visualisation permet de confirmer quelques hypothèses, mais nuance aussi 
 # Analyse des causes de retard
 
 ## Quelles sont les principales causes de retard ?
+<p align ="justify">
 
 Nous voulons savoir quelle sont les principales causes de retard. Pour cela, nous calculons la moyenne pour chaque liaison de la proportion des causes.
 
@@ -2179,8 +2189,9 @@ On peut alors voir que les proportions restent **sensiblement les même pour la 
 
 
 ## Certaines causes sont-elles plus fréquentes selon les stations ?
-
+<p align ="justify">
 La temporalité n'est pas le seul facteur qui pourrait influencer les causes de retard. En effet, celles-ci peuvent être influencées par l'emplacement de la gare, selon la météo ou la voirie à l'emplacement concerné par exemple.
+</p>
 
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
@@ -2218,7 +2229,7 @@ save_plotly(p_interactif)
 </div>
 </div>
 
-<p align="justify">
+<p align ="justify">
 
 Ce graphique, sous forme de **heatmap**, décrit les proportions de causes de retard des trains selon les **stations de départ**. Plus la proportion d'une cause de retard est grande, plus la case correspondante tend vers le rouge foncé.
 </p>
@@ -2226,7 +2237,7 @@ Ce graphique, sous forme de **heatmap**, décrit les proportions de causes de re
 <div class="card text-white bg-primary mb-3">
 <div class="card-header">Interprétation</div>
 <div class="card-body">
-<p class="card-text">
+<p align ="justify">
 
 On peut alors voir que les proportions restent **sensiblement les même pour la plupart** pour chaque station, mais on observe tout de même des **disparités notables** dans certains cas :
 
@@ -2243,7 +2254,7 @@ On peut alors voir que les proportions restent **sensiblement les même pour la 
 <div class="card text-white bg-success mb-3">
   <div class="card-header">Bilan</div>
   <div class="card-body">
-<p align="justify"> 
+<p align ="justify"> 
 On a donc appris que les causes de retard les plus fréquentes étaient les causes extérieures et l'infrastructure ferroviaire. Malgré cette tendance remarquée, ces causes peuvent varier selon le temps et les stations concernées.
 </p>
  </div>
@@ -2301,7 +2312,7 @@ trajets %>%
 <div class="card text-white bg-primary mb-3">
 <div class="card-header">Interprétation</div>
 <div class="card-body">
-<p class="card-text">
+<p>
 Tendance générale : la droite de régression montre une légère pente positive ; plus le trajet est long, plus le retard moyen tend à augmenter, mais l’effet reste modéré.<br>
 Niveau des retards : l’immense majorité des points se situent sous les 20 minutes de retard, quels que soient les trajets.<br>
 Trajets courts (moins de 60 min): fortement concentrés autour de retards très faibles (moins de  10 min), illustrés par les points jaune-orangés à gauche.<br>
@@ -2376,7 +2387,7 @@ ggplot(
 <div class="card text-white bg-primary mb-3">
 <div class="card-header">Interprétation</div>
 <div class="card-body">
-<p class="card-text">
+<p>
 
 La ligne pointillée rouge correspond à la médiane globale du retard, environ cinq minutes. Pour les trois premières tranches, jusqu’à quatre-vingt-dix minutes de voyage, la médiane propre à chaque boîte est proche ou inférieure à cette référence et la dispersion reste très limitée, signe d’une excellente ponctualité pour les trajets courts.<br>
 Entre quatre-vingt-dix et deux cent quarante minutes, la médiane de chaque boîte progresse doucement tandis que l’étendue interquartile s’élargit. Malgré quelques valeurs extrêmes isolées qui grimpent jusqu’à trente, voire quatre-vingts minutes, la majorité des trains restent groupés sous quinze minutes de retard.<br>
@@ -2394,13 +2405,13 @@ Dans l’ensemble, la relation entre durée et retard est positive mais modéré
 <div class="card border-primary mb-3" style="font-size: 1.3rem;">
 <div class="card-header">Aperçu de l'application</div>
 <div class="card-body">
-<p align="justify">
+<p>
     Voici un aperçu de notre application <b>Shiny interactive</b>, hébergée sur <b>shinyapps.io</b>. Elle est consultable en ligne afin d’explorer les différentes analyses réalisées (saisonnalité, flux, retards, etc.).
   </p>
-<p align="justify">
+<p>
   Pour visualiser correctement l’application, il est recommandé de cliquer sur le bouton <b>“Open in Browser”</b> (ouvrir dans le navigateur) si elle ne s’affiche pas localement dans le viewer RStudio.
 </p>
-<p align="justify">
+<p>
       Si l’affichage échoue, une version statique est fournie dans le dépôt GitHub, dans le fichier <code>data/rapport/SHINY.pdf</code> contenant des captures d’écran détaillées. Un bouton est également disponible dans le document pour accéder directement au site en ligne.
 </p>
 </div>
