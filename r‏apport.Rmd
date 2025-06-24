@@ -2466,4 +2466,12 @@ Ce manque de gestion efficace des modifications et des versions provient surtout
 </div>
 </div>
 
-
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">3. Complexité réelle des solutions no-code : promesse trompeuse de simplicité</div>
+<div class="card-body">
+<p class="card-text">
+La promesse centrale des solutions no-code (Ici, Tableau) est celle d'une simplification radicale, permettant à tout utilisateur, même novice, voire complètement inconnu au monde du code ou de la datascience, de réaliser facilement des analyses avancées. Cependant, cette promesse est trompeuse. Certes, contrairement à Shiny, Tableau ne demande pas une maîtrise préalable d’un langage de programmation, comme R ou Python (largement utilisé dans la datascience aussi), mais l’interface elle-même reste difficile à appréhender pour les débutants.<br>
+Tableau rassemble un très grand nombre de fonctionnalités au sein d’une même interface graphique en voulant avoir autant de possibilité que du code. Cette densité d’options engendre une courbe d’apprentissage longue, et l’utilisateur découvre souvent au fil de son expérience qu’il n’exploite pas l’outil de façon optimale, voir qu’il ne pourra pas terminer son projet, entraînant du découragement et des coûts de production à rallonge en terme de temps, énergie et économique. En pratique, il arrive que les utilisateurs se retrouvent bloqués par des problèmes techniques inattendus, les obligeant à recommencer intégralement leur travail dès que les projets atteignent une certaine complexité. Au moment où l'on multiplie les feuilles, les champs calculés, ou les tableaux de bord, Tableau devient souvent ingérable, amenant finalement les utilisateurs à basculer vers du code réel.
+</p>
+</div>
+</div>
