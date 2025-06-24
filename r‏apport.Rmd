@@ -2445,6 +2445,124 @@ knitr::include_app(
 
 # Tableau
 
+## Version courte sous forme de tableau
+
+<div style="overflow-x:auto;">
+  <table style="width:100%;border-collapse:collapse;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:0.92rem;">
+    <!-- En-têtes -->
+    <thead>
+      <tr>
+        <th style="background:linear-gradient(135deg,#007bff 0%,#6610f2 100%);color:#fff;text-align:center;padding:0.75rem;border:1px solid #dee2e6;white-space:nowrap;">Critère</th>
+        <th style="background:linear-gradient(135deg,#007bff 0%,#6610f2 100%);color:#fff;text-align:center;padding:0.75rem;border:1px solid #dee2e6;">Tableau</th>
+        <th style="background:linear-gradient(135deg,#007bff 0%,#6610f2 100%);color:#fff;text-align:center;padding:0.75rem;border:1px solid #dee2e6;">Shiny</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;white-space:nowrap;">Accessibilité &amp; prise en main</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          No-code&nbsp;: premiers graphiques sans écrire de code.<br>
+          Mais interface dense et peu intuitive ; courbe d’apprentissage longue, bloque vite les vrais débutants.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Exige de connaître R, donc entrée plus technique.<br>
+          En contrepartie, logique claire et contrôle total pour qui maîtrise le langage.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Coût direct</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Essai gratuit 15&nbsp;jours.<br>
+          Licence payante 35 – 115 € / mois / utilisateur&nbsp;: lourd pour un semestre ou une petite équipe.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Gratuit et open-source.<br>
+          Dépenses limitées à l’hébergement et à la formation éventuelle.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Ressources &amp; support</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Documentation officielle soignée mais univers fermé ; communauté plus restreinte, contenus propriétaires.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Immense écosystème R, forums actifs, centaines de tutoriels et packages, aide abondante.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Collaboration &amp; versioning</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Partage de fichiers limité, pas de versioning intégré ; interdépendances fragiles, erreurs en cascade ; travail d’équipe difficile.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Code texte → Git, pull-requests, CI/CD ; collaboration selon les standards dev habituels.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Personnalisation</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Bibliothèque de visuels prête à l’emploi.<br>
+          Mais plafonne vite ; limité aux options prévues par l’éditeur.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Liberté totale : UI, logique, JS, CSS, milliers de packages R.<br>
+          Solution idéale pour besoins très spécifiques ou évolutifs.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Interopérabilité</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Bons connecteurs standards (Excel, SQL, etc.) mais difficile d’intégrer flux exotiques ; changer d’outil impose de tout refaire.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Presque tous les formats (CSV, JSON, XML, APIs) ; possibilité de passer de R à Python facilement.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Projets complexes &amp; scalabilité</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Très efficace pour prototypes simples.<br>
+          Devient vite ingérable quand feuilles, champs calculés et dashboards se multiplient ; redémarrages fréquents.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Architecture modulaire ; peut grandir proprement si le code est bien organisé et testé.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Limites techniques (dates)</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Système de dates Excel : impossible de gérer facilement des valeurs &lt; 1900.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Aucune limite arbitraire ; dates historiques gérées nativement.
+        </td>
+      </tr>
+      <tr style="background-color:#f8f9fa;">
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Machine Learning / Deep Learning</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Fonctions ML encore limitées en 2025 ; intégration DL complexe.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Accès direct aux bibliothèques R et Python (via reticulate) pour ML/DL avancé.
+        </td>
+      </tr>
+      <tr>
+        <th style="font-weight:600;background-color:#e2e6ea;border:1px solid #dee2e6;padding:0.6rem 0.8rem;">Impact économique long terme</th>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Prototypage ultra-rapide mais double coût&nbsp;: licences + ingénieurs ; risque de refonte totale à cause des limites.
+        </td>
+        <td style="border:1px solid #dee2e6;padding:0.6rem 0.8rem;">
+          Pas de licences ; code réutilisable et maîtrisé&nbsp;; investissement surtout dans la formation initiale.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+## Version détaillée
+
 <div class="card text-white bg-primary mb-3">
 <div class="card-header">Introduction à la comparaison de Tableau et Shiny (R)</div>
 <div class="card-body">
