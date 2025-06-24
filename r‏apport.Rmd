@@ -135,6 +135,32 @@ data_NA <- data_trains[apply(data_trains, 1, function(x) any(is.na(x))), ]
 </div>
 </div>
 
+<div class="card border-primary mb-3"style="font-size: 1.3rem;">
+  <div class="card-header">Données</div>
+  <div class="card-body">
+**Ce dataset est composé de 7 fichiers issus de différentes sources publiques françaises.**
+<p align="justify"> 
+1. Regularities_by_liaisons_Trains_France.csv <BR>
+➤ Données sur la ponctualité des trains par liaison (retards, annulations, régularité, etc.)
+</p>
+
+<p align="justify"> 
+2. Travel_titles_validations_in_Paris_and_suburbs.csv <BR>
+➤ Nombre quotidien de validations de titres de transport (navigo, ticket) en Île-de-France 
+</p>
+
+<p align="justify"> 
+3. Shapefile des arrêts de transport (Station_shapefiles.*) <BR>
+Ensemble de 5 fichiers SIG permettant de visualiser les stations géolocalisées sur une carte : <BR>
+
+Station_shapefiles.shp : géométrie des arrêts <BR>
+Station_shapefiles.dbf : attributs (noms, codes, types) <BR>
+Station_shapefiles.shx, .prj, .cpg : métadonnées, projection, encodage <BR>
+</p> 
+
+</div>
+</div>
+
 # Exploration
 
 <p align="justify">
