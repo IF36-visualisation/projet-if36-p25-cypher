@@ -2495,3 +2495,15 @@ Shiny offre quant à lui une liberté totale en termes de personnalisation, tout
 </p>
 </div>
 </div>
+
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">6. Implications économiques et techniques à long terme des solutions no-code</div>
+<div class="card-body">
+<p class="card-text">
+Enfin, une réflexion importante porte sur les implications économiques réelles du choix d'une solution no-code comme Tableau. Bien qu’initialement séduisantes au vu de sa simplicité, ces solutions s'adressent rarement à des débutants complets, ou en tout cas, elles s’adressent à des débutants complets en apparence, mais sont inaccessibles pour eux. Les utilisateurs réels doivent généralement disposer d’une expérience préalable dans l’exploitation des données ou d’une logique de développeur pour exploiter toutes les possibilités offertes par l’outil. Voir une spécialisation en outil no-code (métier en popularisation/apparition depuis 2019)<br>
+Une entreprise choisissant Tableau doit non seulement payer le coût élevé des licences, mais aussi prévoir de maintenir ou recruter des ingénieurs et développeurs capables d’accompagner techniquement les équipes, même souvent, d’utiliser les solutions no-code. Cet investissement double constitue un désavantage économique majeur, aggravé par le fait qu’à terme, lorsque les limites techniques seront atteintes, l’entreprise devra probablement engager des développeurs supplémentaires pour tout refaire avec du vrai code, entraînant aussi le paiement potentiel de formation et adaptation aux nouveaux outils utilisés par l’entreprise.<br>
+À titre d’exemple, Tableau utilise le même système de dates qu'Excel, empêchant ainsi de traiter facilement des données antérieures à 1900. Ce genre de contrainte peut devenir rapidement très problématique, en particulier dans les projets nécessitant l’analyse de données historiques ou anciennes.<br>
+Ainsi, la vente initiale de simplicité du no-code cache des coûts techniques lourds, réduisant fortement son intérêt économique réel à moyen ou long terme, en comparaison à des solutions open source comme Shiny, qui offrent à la fois flexibilité et maîtrise technique complète, malgré le besoin initial de connaître le langage qui peut rebuter les débutants du domaine.
+</p>
+</div>
+</div>
