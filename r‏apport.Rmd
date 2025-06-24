@@ -2475,3 +2475,13 @@ Tableau rassemble un très grand nombre de fonctionnalités au sein d’une mêm
 </p>
 </div>
 </div>
+
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">4. Interopérabilité : ouverture technique versus limitations propriétaires</div>
+<div class="card-body">
+<p class="card-text">
+L’interopérabilité constitue également un point clé dans la comparaison. Tableau, solution fermée, gère bien les formats et connecteurs standards, mais quand il s'agit d'intégrer des données moins communes ou nécessitant des prétraitements spécifiques, l’utilisateur est rapidement limité et bloqué par les contraintes imposées par l’outil.<br>
+À l’opposé, Shiny, bénéficiant de la flexibilité du langage R, offre une compatibilité quasi illimitée avec divers formats de données (CSV, JSON, XML, bases de données SQL, API web…). Cette souplesse technique est décisive dans les contextes réels où les données proviennent souvent de sources multiples et hétérogènes. Aussi, si on veut changer le code de R à python par exemple, une simple translation de langage est possible. En revanche, si on veut changer d’outil et qu’on a commencé sur Tableau, il faut tout recommencer de zéro.
+</p>
+</div>
+</div>
