@@ -2445,4 +2445,14 @@ Ces deux outils ont des approches opposées : Tableau est une solution dite « n
 </div>
 </div>
 
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">1. Coût et modèle économique</div>
+<div class="card-body">
+<p class="card-text">
+Le premier aspect essentiel à considérer est la différence marquée au niveau du coût. Pour reproduire nos graphiques initialement réalisés avec Shiny, nous avons utilisé la version d’essaie de 15 jours gratuite de Tableau. Pour un travail de groupe comme celui-ci durant un semestre entier, c’est assez limité. Au-delà de cette période, l’acquisition d’une licence Tableau coûte entre 35 et 115 euros par mois et par utilisateur, représentant un investissement considérable pour une utilisation individuelle ou dans une petite équipe.<br>
+À l'inverse, Shiny est une solution entièrement gratuite et open source, permettant une utilisation sans contraintes financières. De plus, le fait que se soit ouvert amène l’existence d’une vaste communauté d’utilisateurs, très active, générant continuellement une multitude de ressources techniques. Tableau, étant une solution propriétaire, ne bénéficie pas de la même abondance de ressources externes.
+</p>
+</div>
+</div>
+
 
