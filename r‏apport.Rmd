@@ -1676,12 +1676,11 @@ save_plotly(p)
 ```
 </div>
 </div>
-### Explication du graphe
 
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header">Interprétation</div>
+  <div class="card-body">
 Ce graphique, sous forme de **stacked bar plot**, décrit les proportions de causes de retard des trains **selon les mois**, classés dans l'ordre chronologique. Les causes sont les mêmes que celles évoquées dans le précédent graphique
-
-### Observations et hypothèses
-
 On peut alors voir que les proportions restent **sensiblement les même pour la plupart** chaque mois, mais on observe tout de même des **différences notables** lorsqu'on observe plus en détail :
 
 - Les retards pour **causes extérieures** sont **moins fréquentes en été**. Cela peut s'expliquer par la météo, plus clémente pour le réseau ferroviaire en cette période
@@ -1689,6 +1688,15 @@ On peut alors voir que les proportions restent **sensiblement les même pour la 
 - On observe un **pic de retard** à cause de **l'infrastructure ferroviaire** en **avril et juin**. On peut alors supposer que la SNCF choisit ces dates pour entreprendre des travaux de maintenance. En effet, ces dates sont proches des vacances d'été et donc proches des fortes affluences qu'il faut préparer.
 
 - Aux mois de **juillet et aout**, les **retards liés aux passagers** sont **plus importants** qu'aux autres mois. Cela peut être dû à la forte affluence amenée par les vacances d'été, entraînant des problèmes d'organisation.
+  </div>
+</div>
+### Explication du graphe
+
+
+
+### Observations et hypothèses
+
+
 
 ## Certaines causes sont-elles plus fréquentes selon les stations ?
 
