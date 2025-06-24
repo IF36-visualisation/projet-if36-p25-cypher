@@ -1779,115 +1779,122 @@ Deux approches :
 
 ```{r, echo=FALSE}
 trajets <- data_trains
-
+library(viridis)
+library(stringr)
 ```
 
-```{r, echo=FALSE}
-trajets %>% 
-  filter(
-    !is.na(Average_travel_time),
-    !is.na(Average_delay_of_all_arriving_trains)
-  ) %>% 
-  ggplot(aes(x = Average_travel_time,
-             y = Average_delay_of_all_arriving_trains)) +
-  geom_point(alpha = .6) +
-  geom_smooth(method = "lm", se = FALSE, color = "red") +
-  labs(
-    title = "Durée moyenne du trajet vs retard moyen (brut)",
-    x = "Durée moyenne (min)",
-    y = "Retard moyen à l’arrivée (min)"
-  ) +
-  theme_minimal()
-```
 
-### Explication du graphe
-
-Axe X : La durée moyenne des trajets du dataset.
-Axe Y : retard moyen à l’arrivée.
-Chaque point = une liaison ; 
-Ligne rouge = régression linéaire.
-
-### Observations et hypothèses
-
-Nuage très dispersé, on voit quelques valeurs extrêmes (> 200 min de retard) qui tirent la pente vers le haut.
 
 ```{r, echo=FALSE}
 trajets %>% 
   filter(
     !is.na(Average_travel_time),
     !is.na(Average_delay_of_all_arriving_trains),
-    between(Average_delay_of_all_arriving_trains, -60, 120)
+    Average_delay_of_all_arriving_trains >= 0,   
+    Average_delay_of_all_arriving_trains <= 120  
   ) %>% 
-  ggplot(aes(x = Average_travel_time,
-             y = Average_delay_of_all_arriving_trains)) +
-  geom_point(alpha = .6) +
-  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  ggplot(aes(
+    x      = Average_travel_time,
+    y      = Average_delay_of_all_arriving_trains,
+    colour = Average_travel_time       # couleur = durée → dégradé lisible
+  )) +
+  geom_point(alpha = 0.7, size = 2) +
+  geom_smooth(method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  scale_colour_viridis_c(option = "plasma", direction = -1) +
   labs(
-    title = "Durée vs retard (valeurs extrêmes exclues)",
-    x = "Durée moyenne (min)",
-    y = "Retard moyen à l’arrivée (min)"
+    title = "Durée vs retard (retards négatifs exclus == arrivé en avance)",
+    x     = "Durée moyenne (min)",
+    y     = "Retard moyen à l’arrivée (min)",
+    colour = "Durée (min)"
   ) +
-  theme_minimal()
+  theme_minimal(base_size = 13)
 ```
 
-### Explication du graphe
 
-Identique au précédent, on enlève les outliers problématiques pour ajuster le graphique et qu'il soit plus représentatif.
+  
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">Interprétation</div>
+<div class="card-body">
+<p class="card-text">
+Tendance générale : la droite de régression montre une légère pente positive ; plus le trajet est long, plus le retard moyen tend à augmenter, mais l’effet reste modéré.<br>
+Niveau des retards : l’immense majorité des points se situent sous les 20 minutes de retard, quels que soient les trajets.<br>
+Trajets courts (moins de 60 min): fortement concentrés autour de retards très faibles (moins de  10 min), illustrés par les points jaune-orangés à gauche.<br>
+Trajets moyens (≈ 60-250 min): dispersion plus large ; quelques trajets présentent des retards notables (jusqu’à 80 min), mais cela reste des cas isolés.<br>
+Trajets longs (plus de 250 min): les points violets indiquent une légère hausse de retard médian ; néanmoins, la plupart demeurent sous les 20 min, signe d’une ponctualité globalement maîtrisée même sur les longues distances.<br>
+Corrélation faible: la faible pente et la grande dispersion autour de la droite traduisent une corrélation modeste ; la durée du trajet n’explique qu’une petite part de la variabilité des retards.<br>
+Valeurs extrêmes : quelques outliers (retards &gt; 60 min) existent, mais ils ne modifient pas sensiblement la tendance générale.
+    </p>
+  </div>
+</div>
 
-### Observations et hypothèses
-
-Dispersion verticale quasiment constante jusqu’à ~180 min ; au-delà, la variabilité augmente.
-
-Les retards extrêmes observés sur la première figure sont soit des erreurs soit le résultat d'erreur de données
-La durée du trajet n’explique qu’une petite partie des retards, d’autres facteurs (infrastructure, matériel, trafic, météo...) sont très sûrement en cause.
 
 ```{r, echo=FALSE}
-trajets %>% 
+df <- trajets %>% 
   filter(
-    !is.na(Average_travel_time), !is.na(Average_delay_of_all_arriving_trains),
-    between(Average_delay_of_all_arriving_trains, -60, 120)
+    !is.na(Average_travel_time),
+    !is.na(Average_delay_of_all_arriving_trains),
+    Average_delay_of_all_arriving_trains >= 0,      # on retire les retards négatifs
+    Average_delay_of_all_arriving_trains <= 120
   ) %>% 
   mutate(
     travel_time_bin = cut(
       Average_travel_time,
-      breaks = seq(
-        0,
-        max(Average_travel_time, na.rm = TRUE) + 30,  by = 30 ),
-      right = FALSE,
+      breaks = seq(0,
+                   max(Average_travel_time, na.rm = TRUE) + 30,
+                   by = 30),
+      right  = FALSE,
       include.lowest = TRUE
     )
-  ) %>% 
-  ggplot(aes(x = travel_time_bin,
-             y = Average_delay_of_all_arriving_trains)) +
-  geom_boxplot() +
-  coord_flip() +
-  labs(
-    title = "Retard moyen par tranche de durée", x = "Tranche de durée (min)",
-    y = "Retard moyen (min)"
+  )
+
+# médiane globale du retard
+overall_median <- median(df$Average_delay_of_all_arriving_trains, na.rm = TRUE)
+
+# graphique
+ggplot(
+  df,
+  aes(
+    x    = travel_time_bin,                    # durée en abscisse
+    y    = Average_delay_of_all_arriving_trains,
+    fill = travel_time_bin
+  )
+) +
+  geom_boxplot(alpha = 0.85, width = 0.6, outlier.colour = "grey20") +
+  geom_hline(yintercept = overall_median,
+             linetype = "dashed",
+             linewidth = 1,
+             colour = "red") +
+  scale_fill_viridis_d(option = "plasma", guide = "none") +
+  scale_x_discrete(
+    labels = function(b) {
+      str_replace_all(b, "\\[|\\)|\\]", "") |>          # enlève crochets/parenthèses
+        str_replace_all(",", "–")                   # remplace la virgule par un tiret
+    }
   ) +
-  theme_minimal()
+  labs(
+    title = "Retard moyen par tranche de durée (retards négatifs exclus)",
+    x     = "Durée (tranches de 30 min)",
+    y     = "Retard moyen (min)"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  # étiquette inclinée
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  )
 ```
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">Interprétation</div>
+<div class="card-body">
+<p class="card-text">
 
-### Explication du graphe
+La ligne pointillée rouge correspond à la médiane globale du retard, environ cinq minutes. Pour les trois premières tranches, jusqu’à quatre-vingt-dix minutes de voyage, la médiane propre à chaque boîte est proche ou inférieure à cette référence et la dispersion reste très limitée, signe d’une excellente ponctualité pour les trajets courts.<br>
+Entre quatre-vingt-dix et deux cent quarante minutes, la médiane de chaque boîte progresse doucement tandis que l’étendue interquartile s’élargit. Malgré quelques valeurs extrêmes isolées qui grimpent jusqu’à trente, voire quatre-vingts minutes, la majorité des trains restent groupés sous quinze minutes de retard.<br>
+À partir de deux cent quarante minutes, la médiane dépasse régulièrement la ligne de référence et la variabilité augmente encore. Les tranches comprises entre deux cent soixante-dix et trois cent trente minutes affichent la dispersion la plus forte et des retards médians autour de huit à dix minutes. Pour la dernière tranche, trois cent soixante à trois cent quatre-vingt-dix minutes, la médiane retombe légèrement, sans doute faute d’effectifs importants.<br>
+Dans l’ensemble, la relation entre durée et retard est positive mais modérée : un trajet plus long accroît légèrement le retard médian, mais, toutes durées confondues, la moitié des services continuent d’arriver avec moins de dix minutes de retard.
 
-Chaque boîte correspond à une tranche de 30 min de durée. Elle montre la distribution du retard moyen pour une tranche de durée du trajet.
+</p>
+</div>
+</div>
 
-### Observations et hypothèses
 
-Médiane proche de 6 min jusqu’à la tranche 120-150 min, puis hausse continue.
-Les valeurs atypiques s’allongent après 180 min, on peut observer que les longs trajets ont plus souvent des retards supérieur à 30 min.
-
-Les trajets courts subissent plutôt des petits retards mais fréquents.
-
-## Conclusion Retard vs durée de trajet
-
-La durée du trajet contribue aux retards, surtout quand elle dépasse 3 heures.
-
-En retirant les outliers, la corrélation devient modeste, les retards se jouent sur une multitude de facteurs plus que sur la distance du trajet.
-
-Pour comprendre les causes, il faudra donc croiser la durée par exemple avec :
-
--Type de ligne.
--Période/saison.
-
-Et dans un second temps regarder les catégorie de cause déjà présentes comme l'infrastructure, le matériel ou les voyageurs
