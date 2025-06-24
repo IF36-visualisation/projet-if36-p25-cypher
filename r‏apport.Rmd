@@ -3,8 +3,8 @@ title: "Analyse du Réseau de Transport Ferroviaire en France"
 output:
   html_document:
     css: 
-    - custom.css
-    - bootstrap.min.css
+    - data/rapport/custom.css
+    - data/rapport/bootstrap.min.css
     toc: true
     toc_float: true
     number_sections: true
@@ -14,7 +14,7 @@ output:
 ---
 
 
-![](imgsncf.png)
+![](data/rapport/imgsncf.png)
 
 ```{r setup-css, echo=FALSE, results='asis'}
 cat("
@@ -813,7 +813,7 @@ fig
 Ce graphique présente l'évolution mensuelle des retards de trains en France de **2015 à 2020**.  
 </p>
   <div style="text-align:center;">
-  <img src="au_fil_des_mois.png" style="border-radius: 8px; max-width: 50%; margin-bottom: 1rem;" alt="Évolution mensuelle">
+  <img src="data/rapport/au_fil_des_mois.png" style="border-radius: 8px; max-width: 50%; margin-bottom: 1rem;" alt="Évolution mensuelle">
   </div>
 <div class="card text-white bg-primary mb-3">
   <div class="card-header">Interprétation</div>
@@ -1697,7 +1697,7 @@ Chaque saison est marquée par une **ligne verticale pointillée** et un **label
 Pas possible d'être possible à la date près (car uniquement des données du mois et pas de jours) donc on a arrondis au mois (exemple : 21 décembre -> 1er janvier pour le début de l'hiver.)
 </p>
  <div style="text-align:center;">
-  <img src="au_fil_des_saisons.png" style="border-radius: 8px; max-width: 80%; margin-bottom: 1rem;" alt="Évolution mensuelle">
+  <img src="data/rapport/au_fil_des_saisons.png" style="border-radius: 8px; max-width: 80%; margin-bottom: 1rem;" alt="Évolution mensuelle">
   </div>
 <div class="card text-white bg-primary mb-3">
   <div class="card-header">Interprétation</div>
