@@ -5,7 +5,7 @@ library(sf)
 library(dplyr)
 
 
-trajets_retards <- st_read("../../data/trajets_retards.geojson", quiet = TRUE)
+trajets_retards <- st_read("trajets_retards.geojson", quiet = TRUE)
 
 
 make_carte_france <- function(annee) {

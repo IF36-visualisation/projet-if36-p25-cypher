@@ -2387,4 +2387,41 @@ Dans l’ensemble, la relation entre durée et retard est positive mais modéré
 </div>
 </div>
 
+---
+
+# Shiny 
+
+<div class="card border-primary mb-3" style="font-size: 1.3rem;">
+<div class="card-header">Aperçu de l'application</div>
+<div class="card-body">
+<p align="justify">
+    Voici un aperçu de notre application <b>Shiny interactive</b>, hébergée sur <b>shinyapps.io</b>. Elle est consultable en ligne afin d’explorer les différentes analyses réalisées (saisonnalité, flux, retards, etc.).
+  </p>
+<p align="justify">
+  Pour visualiser correctement l’application, il est recommandé de cliquer sur le bouton <b>“Open in Browser”</b> (ouvrir dans le navigateur) si elle ne s’affiche pas localement dans le viewer RStudio.
+</p>
+<p align="justify">
+      Si l’affichage échoue, une version statique est fournie dans le dépôt GitHub, dans le fichier <code>data/rapport/SHINY.pdf</code> contenant des captures d’écran détaillées. Un bouton est également disponible dans le document pour accéder directement au site en ligne.
+</p>
+</div>
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+  <a href="https://if36-cypher.shinyapps.io/shiny_dashboards/" target="_blank" style="display:inline-block; padding:10px 20px; background-color:#005CBF; color:white; text-decoration:none; border-radius:8px; font-weight:bold;">
+    Voir l'application interactive
+  </a>
+</div>
+
+
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
+<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+```{r shinyapp_embed, echo=FALSE, eval=TRUE}
+knitr::include_app(
+  url = "https://if36-cypher.shinyapps.io/shiny_dashboards/",
+  height = "700px")
+```
+</div>
+</div>
+
+
 

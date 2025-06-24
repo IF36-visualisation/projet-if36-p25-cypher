@@ -3,7 +3,7 @@
 library(dplyr)
 library(readr)
 
-data_trains <- read_csv("../../data/Train_dataset.csv") %>%
+data_trains <- read_csv("Train_dataset.csv") %>%
   select(
     -`Comment (optional) delays at departure`,
     -`Comment (optional) delays on arrival`

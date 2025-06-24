@@ -1,5 +1,5 @@
 # app.R
-library(shiny)
+#library(shiny)
 library(dplyr)
 library(readr)
 library(plotly)
@@ -8,7 +8,6 @@ library(sf)
 
 # 1) Charger scripts 
 source("data_loader.R")
-
 # ------------------------------------
 source("rubrique_presentation/presentation_cards.R")
 source("rubrique_presentation/ui_presentation.R")
@@ -26,7 +25,7 @@ source("rubrique_causes/plot_causes.R")
 #-------------------------------------
 source("rubrique_cartes/ui_cartes.R")
 source("rubrique_cartes/carte_saisons.R")
-gare_coords <- read_csv("../../data/gares_coords.csv")
+gare_coords <- read_csv("gares_coords.csv")
 #-------------------------------------
 
 # 3) Définir l'UI principal
