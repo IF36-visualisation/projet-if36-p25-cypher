@@ -1551,7 +1551,7 @@ Cependant, des phénomènes que nous n'avions pas prévus apparaissent clairemen
 Il est dur d'affirmer et de généraliser la cause de cette différence de retard moyen entre été et hiver par région géographique. Pour certaines d'entre elles, comme les Alpes, le Nord de la France et le Sud, cela peut être le cas, mais pour le reste trop de paramètre peuvent être pris en compte. 
 Cette visualisation permet de confirmer quelques hypothèses, mais nuance aussi les aprioris que nous avions. 
 </div>
-</div
+</div>
 
 
 ---
