@@ -1554,13 +1554,17 @@ Cette visualisation permet de confirmer quelques hypothèses, mais nuance aussi 
 </div
 
 
+---
+
 # Analyse des causes de retard
 
 ## Quelles sont les principales causes de retard ?
 
 Nous voulons savoir quelle sont les principales causes de retard. Pour cela, nous calculons la moyenne pour chaque liaison de la proportion des causes.
+
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
 
 data_trains <- data_trains %>% 
@@ -1584,85 +1588,30 @@ proportion_retards <- proportion_retards %>%
 proportion_retards <- proportion_retards %>% 
   mutate(cause = factor(cause, levels = cause))
 
-ggplot(proportion_retards, aes(x = cause, y = moyenne)) +
-  geom_col(fill="skyblue") +
-  geom_text(aes(label = round(moyenne, 1), size = moyenne), 
+p <- ggplot(proportion_retards, aes(
+  x = cause,
+  y = moyenne,
+  text = paste0(
+    "<b>Cause :</b> ", cause,
+    "<br><b>Proportion :</b> ", round(moyenne, 1), "%"
+  )
+)) +
+  geom_col(fill = "skyblue") +
+  geom_text(aes(label = paste0(round(moyenne, 1), "%")), 
             position = position_stack(vjust = 0.5),
-            color = "white") +
+            color = "white", size = 5) +
   labs(title = "Proportion de retards par cause",
        x = "Cause du retard",
        y = "Pourcentage de retards") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_y_continuous(breaks = seq(0, 30, by = 4)) +
-  scale_size_continuous(range = c(5, 10)) +
-  guides(size = "none")
+  scale_y_continuous(breaks = seq(0, 30, by = 4),
+                     labels = label_percent(scale = 1))
+
+p <- ggplotly(p, tooltip = "text")
+save_plotly(p)
 ```
 </div>
 </div>
-
-
-
-```{r echo=FALSE, fig.width=6, fig.height=4, message=FALSE, warning=FALSE}
-
-# Paramètre : année sélectionnée 
-annee_selectionnee <- 2019
-
-# Préparer les données
-data_filtered <- data_trains %>%
-  filter(Year == annee_selectionnee) %>%
-  mutate(
-    date = as.Date(sprintf("%d-%02d-01", Year, Month)),
-    Mois_annee = format(date, "%m")  # mois uniquement
-  )
-
-# Calcul du total attendu et total de retards par gare et mois
-retards_pourcent <- data_filtered %>%
-  group_by(Departure_station, Mois_annee) %>%
-  summarise(
-    total_retards = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
-    total_circulations = sum(Number_of_expected_circulations, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    taux_retard = ifelse(total_circulations > 0, total_retards / total_circulations * 100, NA)
-  )
-
-# Top 20 gares avec le plus de retards cumulés
-top_gares <- retards_pourcent %>%
-  group_by(Departure_station) %>%
-  summarise(total = sum(total_retards, na.rm = TRUE)) %>%
-  arrange(desc(total)) %>%
-  slice(1:20) %>%
-  pull(Departure_station)
-
-# Filtrer sur les 20 gares
-retards_top20 <- retards_pourcent %>%
-  filter(Departure_station %in% top_gares)
-
-# Reordonner les gares
-retards_top20 <- retards_top20 %>%
-  mutate(
-    Departure_station = factor(Departure_station, levels = rev(top_gares)),
-    Mois_annee = factor(Mois_annee, levels = sprintf("%02d", 1:12))
-  )
-
-# Création de la heatmap avec pourcentages
-ggplot(retards_top20, aes(x = Mois_annee, y = Departure_station, fill = taux_retard)) +
-  geom_tile(color = "white") +
-  scale_fill_gradient(low = "white", high = "red", na.value = "grey90", name = "% retards") +
-  labs(
-    title = paste0("Taux de retards par gare (%) - ", annee_selectionnee),
-    x = "Mois",
-    y = "Gare"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
-    axis.text.y = element_text(size = 10),
-    plot.title = element_text(face = "bold", hjust = 0.5),
-    panel.grid.major = element_blank()
-  )
-```
 
 ### Explication du graphe
 
@@ -1687,25 +1636,38 @@ Nous avons maintenant une certaine idée de la proportion de chaque cause, mais 
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+library(plotly)
+library(scales)
+
 proportion_mois <- data_trains %>% 
-  group_by(Month) 
-proportion_mois <- proportion_mois %>% 
+  group_by(Month) %>% 
   summarise(across(c(cause_externe, infra_ferroviaire, gestion_trafic, 
                      materiel_roulant, cause_voyageur, retard_station), 
-                   mean, na.rm = TRUE)) 
-proportion_mois <- proportion_mois %>%
+                   mean, na.rm = TRUE)) %>% 
   pivot_longer(cols = -Month, names_to = "cause", values_to = "moyenne")
 
-ggplot(proportion_mois, aes(x = Month, y = moyenne, fill = cause)) +
+proportion_mois <- proportion_mois %>%
+  mutate(text = paste0(
+    "<b>Mois :</b> ", month.abb[Month], "<br>",
+    "<b>Cause :</b> ", cause, "<br>",
+    "<b>Proportion :</b> ", round(moyenne, 1)  # Sans %
+  ))
+
+p <- ggplot(proportion_mois, aes(x = Month, y = moyenne, fill = cause, text = text)) +
   geom_col(position = "stack") +
-  geom_text(aes(label = round(moyenne, 1)), 
+  geom_text(aes(label = round(moyenne, 1)),
             position = position_stack(vjust = 0.5),
             color = "white", size = 2.5) +
   labs(title = "Proportion des retards par mois et par cause",
        x = "Mois",
        y = "Proportion de retards") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_x_continuous(breaks = seq(1,12, by = 1), labels = month.abb)
+  scale_x_continuous(breaks = 1:12, labels = month.abb) +
+  scale_y_continuous(labels = label_percent(scale = 1))  # % seulement sur l'axe
+
+p <- ggplotly(p, tooltip = "text")
+
+save_plotly(p)
 ```
 </div>
 </div>
@@ -1730,22 +1692,34 @@ La temporalité n'est pas le seul facteur qui pourrait influencer les causes de 
 <div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
-
 moyennes_depsta <- data_trains %>% 
   group_by(Departure_station) %>% 
   summarise(across(c(cause_externe, infra_ferroviaire, gestion_trafic, 
                      materiel_roulant, cause_voyageur, retard_station), 
                    mean, na.rm = TRUE)) %>%
-  pivot_longer(cols = -Departure_station, names_to = "cause", values_to = "moyenne")
+  pivot_longer(cols = -Departure_station, names_to = "cause", values_to = "moyenne") %>%
+  mutate(
+    text = paste0(
+      "<b>Station :</b> ", Departure_station, "<br>",
+      "<b>Cause :</b> ", cause, "<br>",
+      "<b>Proportion :</b> ", round(moyenne, 3), "%"  # juste suffixe %
+    )
+  )
 
-ggplot(moyennes_depsta, aes(x = cause, y = Departure_station, fill = moyenne)) +
+p <- ggplot(moyennes_depsta, aes(x = cause, y = Departure_station, fill = moyenne, text = text)) +
   geom_tile() +
-  scale_fill_gradient(low = "white", high = "red") +
+  scale_fill_gradient(low = "white", high = "red",
+                      labels = function(x) paste0(round(x, 3), "%")) +  # juste suffixe %
   labs(title = "Proportion des retards par station de départ et par cause",
        x = "Cause du retard",
        y = "Station",
        fill = "Proportion de retard") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6),axis.text.y = element_text(size = 7))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
+        axis.text.y = element_text(size = 7))
+
+p_interactif <- ggplotly(p, tooltip = "text")
+
+save_plotly(p_interactif)
 
 ```
 </div>
