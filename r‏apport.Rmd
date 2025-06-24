@@ -576,7 +576,7 @@ Seul le croisement avec la <b>fréquentation</b> permet de poser un diagnostic f
   </div>
 </div>
 
-# Bilan de la phase Contextualisation
+## Bilan de la phase Contextualisation
 
 <div class="card text-white bg-success mb-3">
   <div class="card-header">Bilan</div>
@@ -586,9 +586,6 @@ Seul le croisement avec la <b>fréquentation</b> permet de poser un diagnostic f
 </div>
 
 # Évolution des retards dans le temps
-
-**Question 1**
-
 
 <div class="card border-primary mb-3"style="font-size: 1.3rem;">
   <div class="card-header">Interaction avec le graphe</div>
@@ -812,20 +809,12 @@ fig
 ```
 </div>
 </div>
-
-### Explication du graphe
-
 <p align="justify">
 Ce graphique présente l'évolution mensuelle des retards de trains en France de **2015 à 2020**.  
-
 </p>
-
-
   <div style="text-align:center;">
   <img src="au_fil_des_mois.png" style="border-radius: 8px; max-width: 50%; margin-bottom: 1rem;" alt="Évolution mensuelle">
   </div>
-    
-
 <div class="card text-white bg-primary mb-3">
   <div class="card-header">Interprétation</div>
   <div class="card-body">
@@ -837,12 +826,584 @@ Ce graphique présente l'évolution mensuelle des retards de trains en France de
 </div>
 </div>
 
-
 ---
 
 ## Y a-t-il des saisons où les retards sont plus fréquents ?
 
-<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; width: 48%;">
+<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+# Choix de l'année
+annee_selectionnee <- 2015
+
+# Filtrer l'année
+data_annee <- data_trains %>%
+  filter(Year == annee_selectionnee) %>%
+  mutate(date = as.Date(sprintf("%d-%02d-01", Year, Month)))
+
+# Agréger
+retards_mensuels <- data_annee %>%
+  group_by(date) %>%
+  summarise(
+    nb_total = sum(Number_of_expected_circulations, na.rm = TRUE),
+    nb_annules = sum(Number_of_cancelled_trains, na.rm = TRUE),
+    retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
+    retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
+    retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
+    retard_arrivee = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    nb_circules = nb_total - nb_annules,
+    trains_a_lheure = nb_circules - retard_arrivee
+  )
+
+# Transformation en long avec % par type
+retards_long <- retards_mensuels %>%
+  pivot_longer(cols = c(retard_15min, retard_30min, retard_60min),
+               names_to = "Type_retard",
+               values_to = "Nombre") %>%
+  mutate(
+    pourcentage = round((Nombre / nb_circules) * 100, 2),
+    Mois_annee = format(date, "%m/%Y"),
+    Saison = case_when(
+      month(date) %in% c(12, 1, 2) ~ "Hiver",
+      month(date) %in% c(3, 4, 5) ~ "Printemps",
+      month(date) %in% c(6, 7, 8) ~ "Été",
+      month(date) %in% c(9, 10, 11) ~ "Automne"
+    ),
+    tooltip_text = paste0(
+      "<b>", Mois_annee, "</b><br>",
+      case_when(
+        Type_retard == "retard_15min" ~ "> 15 min : ",
+        Type_retard == "retard_30min" ~ "> 30 min : ",
+        Type_retard == "retard_60min" ~ "> 60 min : ",
+        TRUE ~ ""
+      ),
+      pourcentage, "% des trains (", Nombre, " trains)"
+    )
+  )
+
+# Saison pour les lignes
+saisons <- data.frame(
+  Saison = c("Hiver", "Printemps", "Été", "Automne"),
+  xmin = as.Date(c(
+    paste0(annee_selectionnee, "-12-12"),
+    paste0(annee_selectionnee, "-03-21"),
+    paste0(annee_selectionnee, "-06-21"),
+    paste0(annee_selectionnee, "-09-21")
+  )),
+  xmax = as.Date(c(
+    paste0(annee_selectionnee, "-03-20"),
+    paste0(annee_selectionnee, "-06-20"),
+    paste0(annee_selectionnee, "-09-20"),
+    paste0(annee_selectionnee, "-12-20")
+  )),
+  label_pos = as.Date(c(
+    paste0(annee_selectionnee, "-02-05"),
+    paste0(annee_selectionnee, "-05-05"),
+    paste0(annee_selectionnee, "-08-05"),
+    paste0(annee_selectionnee, "-11-05")
+  ))
+)
+
+# Hauteur Y max
+y_max <- max(retards_long %>% group_by(date) %>% summarise(somme = sum(pourcentage)) %>% pull(somme), na.rm = TRUE)
+
+# Couleurs
+couleurs_retard <- c(
+  "retard_15min" = "#FFEE58",
+  "retard_30min" = "#FFA726",
+  "retard_60min" = "#EF5350"
+)
+
+# --- Graphique ---
+p <- ggplot() +
+
+  # Zone > 20%
+  geom_rect(aes(xmin = min(retards_long$date) - 15,
+                xmax = max(retards_long$date) + 15,
+                ymin = 20, ymax = y_max + 5),
+            fill = "#FFE0B2", alpha = 0.3) +
+
+  # Retards empilés (%)
+  geom_col(
+    data = retards_long,
+    aes(x = date, y = pourcentage, fill = Type_retard, text = tooltip_text),
+    position = "stack", width = 25
+  ) +
+
+  # Traits saisons
+  geom_vline(
+    data = saisons,
+    aes(xintercept = as.numeric(xmin)),
+    linetype = "dashed", color = "grey50", size = 0.5
+  ) +
+
+  # Labels saisons
+  geom_text(
+    data = saisons,
+    aes(x = label_pos, y = y_max + 2, label = Saison),
+    color = "grey40", size = 4, fontface = "bold"
+  ) +
+
+  scale_fill_manual(
+    values = couleurs_retard,
+    labels = c("> 15 min", "> 30 min", "> 60 min")
+  ) +
+
+  labs(
+    title = paste0("Part des trains en retard par mois (", annee_selectionnee, ")"),
+    x = "Mois",
+    y = "% de trains en retard",
+    fill = "Type de retard"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(size = 13, face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    plot.margin = margin(t = 30, r = 10, b = 10, l = 10)
+  ) +
+  scale_x_date(date_labels = "%m/%Y", date_breaks = "2 months")
+
+# --- Rendu interactif ---
+p
+
+```
+</div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; width: 48%;">
+<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+# Choix de l'année
+annee_selectionnee <- 2016
+
+# Filtrer l'année
+data_annee <- data_trains %>%
+  filter(Year == annee_selectionnee) %>%
+  mutate(date = as.Date(sprintf("%d-%02d-01", Year, Month)))
+
+# Agréger
+retards_mensuels <- data_annee %>%
+  group_by(date) %>%
+  summarise(
+    nb_total = sum(Number_of_expected_circulations, na.rm = TRUE),
+    nb_annules = sum(Number_of_cancelled_trains, na.rm = TRUE),
+    retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
+    retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
+    retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
+    retard_arrivee = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    nb_circules = nb_total - nb_annules,
+    trains_a_lheure = nb_circules - retard_arrivee
+  )
+
+# Transformation en long avec % par type
+retards_long <- retards_mensuels %>%
+  pivot_longer(cols = c(retard_15min, retard_30min, retard_60min),
+               names_to = "Type_retard",
+               values_to = "Nombre") %>%
+  mutate(
+    pourcentage = round((Nombre / nb_circules) * 100, 2),
+    Mois_annee = format(date, "%m/%Y"),
+    Saison = case_when(
+      month(date) %in% c(12, 1, 2) ~ "Hiver",
+      month(date) %in% c(3, 4, 5) ~ "Printemps",
+      month(date) %in% c(6, 7, 8) ~ "Été",
+      month(date) %in% c(9, 10, 11) ~ "Automne"
+    ),
+    tooltip_text = paste0(
+      "<b>", Mois_annee, "</b><br>",
+      case_when(
+        Type_retard == "retard_15min" ~ "> 15 min : ",
+        Type_retard == "retard_30min" ~ "> 30 min : ",
+        Type_retard == "retard_60min" ~ "> 60 min : ",
+        TRUE ~ ""
+      ),
+      pourcentage, "% des trains (", Nombre, " trains)"
+    )
+  )
+
+# Saison pour les lignes
+saisons <- data.frame(
+  Saison = c("Hiver", "Printemps", "Été", "Automne"),
+  xmin = as.Date(c(
+    paste0(annee_selectionnee, "-12-12"),
+    paste0(annee_selectionnee, "-03-21"),
+    paste0(annee_selectionnee, "-06-21"),
+    paste0(annee_selectionnee, "-09-21")
+  )),
+  xmax = as.Date(c(
+    paste0(annee_selectionnee, "-03-20"),
+    paste0(annee_selectionnee, "-06-20"),
+    paste0(annee_selectionnee, "-09-20"),
+    paste0(annee_selectionnee, "-12-20")
+  )),
+  label_pos = as.Date(c(
+    paste0(annee_selectionnee, "-02-05"),
+    paste0(annee_selectionnee, "-05-05"),
+    paste0(annee_selectionnee, "-08-05"),
+    paste0(annee_selectionnee, "-11-05")
+  ))
+)
+
+# Hauteur Y max
+y_max <- max(retards_long %>% group_by(date) %>% summarise(somme = sum(pourcentage)) %>% pull(somme), na.rm = TRUE)
+
+# Couleurs
+couleurs_retard <- c(
+  "retard_15min" = "#FFEE58",
+  "retard_30min" = "#FFA726",
+  "retard_60min" = "#EF5350"
+)
+
+# --- Graphique ---
+p <- ggplot() +
+
+  # Zone > 20%
+  geom_rect(aes(xmin = min(retards_long$date) - 15,
+                xmax = max(retards_long$date) + 15,
+                ymin = 20, ymax = y_max + 5),
+            fill = "#FFE0B2", alpha = 0.3) +
+
+  # Retards empilés (%)
+  geom_col(
+    data = retards_long,
+    aes(x = date, y = pourcentage, fill = Type_retard, text = tooltip_text),
+    position = "stack", width = 25
+  ) +
+
+  # Traits saisons
+  geom_vline(
+    data = saisons,
+    aes(xintercept = as.numeric(xmin)),
+    linetype = "dashed", color = "grey50", size = 0.5
+  ) +
+
+  # Labels saisons
+  geom_text(
+    data = saisons,
+    aes(x = label_pos, y = y_max + 2, label = Saison),
+    color = "grey40", size = 4, fontface = "bold"
+  ) +
+
+  scale_fill_manual(
+    values = couleurs_retard,
+    labels = c("> 15 min", "> 30 min", "> 60 min")
+  ) +
+
+  labs(
+    title = paste0("Part des trains en retard par mois (", annee_selectionnee, ")"),
+    x = "Mois",
+    y = "% de trains en retard",
+    fill = "Type de retard"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(size = 13, face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    plot.margin = margin(t = 30, r = 10, b = 10, l = 10)
+  ) +
+  scale_x_date(date_labels = "%m/%Y", date_breaks = "2 months")
+
+# --- Rendu interactif ---
+p
+
+```
+</div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; width: 48%;">
+<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+# Choix de l'année
+annee_selectionnee <- 2017
+
+# Filtrer l'année
+data_annee <- data_trains %>%
+  filter(Year == annee_selectionnee) %>%
+  mutate(date = as.Date(sprintf("%d-%02d-01", Year, Month)))
+
+# Agréger
+retards_mensuels <- data_annee %>%
+  group_by(date) %>%
+  summarise(
+    nb_total = sum(Number_of_expected_circulations, na.rm = TRUE),
+    nb_annules = sum(Number_of_cancelled_trains, na.rm = TRUE),
+    retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
+    retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
+    retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
+    retard_arrivee = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    nb_circules = nb_total - nb_annules,
+    trains_a_lheure = nb_circules - retard_arrivee
+  )
+
+# Transformation en long avec % par type
+retards_long <- retards_mensuels %>%
+  pivot_longer(cols = c(retard_15min, retard_30min, retard_60min),
+               names_to = "Type_retard",
+               values_to = "Nombre") %>%
+  mutate(
+    pourcentage = round((Nombre / nb_circules) * 100, 2),
+    Mois_annee = format(date, "%m/%Y"),
+    Saison = case_when(
+      month(date) %in% c(12, 1, 2) ~ "Hiver",
+      month(date) %in% c(3, 4, 5) ~ "Printemps",
+      month(date) %in% c(6, 7, 8) ~ "Été",
+      month(date) %in% c(9, 10, 11) ~ "Automne"
+    ),
+    tooltip_text = paste0(
+      "<b>", Mois_annee, "</b><br>",
+      case_when(
+        Type_retard == "retard_15min" ~ "> 15 min : ",
+        Type_retard == "retard_30min" ~ "> 30 min : ",
+        Type_retard == "retard_60min" ~ "> 60 min : ",
+        TRUE ~ ""
+      ),
+      pourcentage, "% des trains (", Nombre, " trains)"
+    )
+  )
+
+# Saison pour les lignes
+saisons <- data.frame(
+  Saison = c("Hiver", "Printemps", "Été", "Automne"),
+  xmin = as.Date(c(
+    paste0(annee_selectionnee, "-12-12"),
+    paste0(annee_selectionnee, "-03-21"),
+    paste0(annee_selectionnee, "-06-21"),
+    paste0(annee_selectionnee, "-09-21")
+  )),
+  xmax = as.Date(c(
+    paste0(annee_selectionnee, "-03-20"),
+    paste0(annee_selectionnee, "-06-20"),
+    paste0(annee_selectionnee, "-09-20"),
+    paste0(annee_selectionnee, "-12-20")
+  )),
+  label_pos = as.Date(c(
+    paste0(annee_selectionnee, "-02-05"),
+    paste0(annee_selectionnee, "-05-05"),
+    paste0(annee_selectionnee, "-08-05"),
+    paste0(annee_selectionnee, "-11-05")
+  ))
+)
+
+# Hauteur Y max
+y_max <- max(retards_long %>% group_by(date) %>% summarise(somme = sum(pourcentage)) %>% pull(somme), na.rm = TRUE)
+
+# Couleurs
+couleurs_retard <- c(
+  "retard_15min" = "#FFEE58",
+  "retard_30min" = "#FFA726",
+  "retard_60min" = "#EF5350"
+)
+
+# --- Graphique ---
+p <- ggplot() +
+
+  # Zone > 20%
+  geom_rect(aes(xmin = min(retards_long$date) - 15,
+                xmax = max(retards_long$date) + 15,
+                ymin = 20, ymax = y_max + 5),
+            fill = "#FFE0B2", alpha = 0.3) +
+
+  # Retards empilés (%)
+  geom_col(
+    data = retards_long,
+    aes(x = date, y = pourcentage, fill = Type_retard, text = tooltip_text),
+    position = "stack", width = 25
+  ) +
+
+  # Traits saisons
+  geom_vline(
+    data = saisons,
+    aes(xintercept = as.numeric(xmin)),
+    linetype = "dashed", color = "grey50", size = 0.5
+  ) +
+
+  # Labels saisons
+  geom_text(
+    data = saisons,
+    aes(x = label_pos, y = y_max + 2, label = Saison),
+    color = "grey40", size = 4, fontface = "bold"
+  ) +
+
+  scale_fill_manual(
+    values = couleurs_retard,
+    labels = c("> 15 min", "> 30 min", "> 60 min")
+  ) +
+
+  labs(
+    title = paste0("Part des trains en retard par mois (", annee_selectionnee, ")"),
+    x = "Mois",
+    y = "% de trains en retard",
+    fill = "Type de retard"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(size = 13, face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    plot.margin = margin(t = 30, r = 10, b = 10, l = 10)
+  ) +
+  scale_x_date(date_labels = "%m/%Y", date_breaks = "2 months")
+
+# --- Rendu interactif ---
+p
+
+```
+</div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; width: 48%;">
+<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+# Choix de l'année
+annee_selectionnee <- 2018
+
+# Filtrer l'année
+data_annee <- data_trains %>%
+  filter(Year == annee_selectionnee) %>%
+  mutate(date = as.Date(sprintf("%d-%02d-01", Year, Month)))
+
+# Agréger
+retards_mensuels <- data_annee %>%
+  group_by(date) %>%
+  summarise(
+    nb_total = sum(Number_of_expected_circulations, na.rm = TRUE),
+    nb_annules = sum(Number_of_cancelled_trains, na.rm = TRUE),
+    retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
+    retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
+    retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
+    retard_arrivee = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    nb_circules = nb_total - nb_annules,
+    trains_a_lheure = nb_circules - retard_arrivee
+  )
+
+# Transformation en long avec % par type
+retards_long <- retards_mensuels %>%
+  pivot_longer(cols = c(retard_15min, retard_30min, retard_60min),
+               names_to = "Type_retard",
+               values_to = "Nombre") %>%
+  mutate(
+    pourcentage = round((Nombre / nb_circules) * 100, 2),
+    Mois_annee = format(date, "%m/%Y"),
+    Saison = case_when(
+      month(date) %in% c(12, 1, 2) ~ "Hiver",
+      month(date) %in% c(3, 4, 5) ~ "Printemps",
+      month(date) %in% c(6, 7, 8) ~ "Été",
+      month(date) %in% c(9, 10, 11) ~ "Automne"
+    ),
+    tooltip_text = paste0(
+      "<b>", Mois_annee, "</b><br>",
+      case_when(
+        Type_retard == "retard_15min" ~ "> 15 min : ",
+        Type_retard == "retard_30min" ~ "> 30 min : ",
+        Type_retard == "retard_60min" ~ "> 60 min : ",
+        TRUE ~ ""
+      ),
+      pourcentage, "% des trains (", Nombre, " trains)"
+    )
+  )
+
+# Saison pour les lignes
+saisons <- data.frame(
+  Saison = c("Hiver", "Printemps", "Été", "Automne"),
+  xmin = as.Date(c(
+    paste0(annee_selectionnee, "-12-12"),
+    paste0(annee_selectionnee, "-03-21"),
+    paste0(annee_selectionnee, "-06-21"),
+    paste0(annee_selectionnee, "-09-21")
+  )),
+  xmax = as.Date(c(
+    paste0(annee_selectionnee, "-03-20"),
+    paste0(annee_selectionnee, "-06-20"),
+    paste0(annee_selectionnee, "-09-20"),
+    paste0(annee_selectionnee, "-12-20")
+  )),
+  label_pos = as.Date(c(
+    paste0(annee_selectionnee, "-02-05"),
+    paste0(annee_selectionnee, "-05-05"),
+    paste0(annee_selectionnee, "-08-05"),
+    paste0(annee_selectionnee, "-11-05")
+  ))
+)
+
+# Hauteur Y max
+y_max <- max(retards_long %>% group_by(date) %>% summarise(somme = sum(pourcentage)) %>% pull(somme), na.rm = TRUE)
+
+# Couleurs
+couleurs_retard <- c(
+  "retard_15min" = "#FFEE58",
+  "retard_30min" = "#FFA726",
+  "retard_60min" = "#EF5350"
+)
+
+# --- Graphique ---
+p <- ggplot() +
+
+  # Zone > 20%
+  geom_rect(aes(xmin = min(retards_long$date) - 15,
+                xmax = max(retards_long$date) + 15,
+                ymin = 20, ymax = y_max + 5),
+            fill = "#FFE0B2", alpha = 0.3) +
+
+  # Retards empilés (%)
+  geom_col(
+    data = retards_long,
+    aes(x = date, y = pourcentage, fill = Type_retard, text = tooltip_text),
+    position = "stack", width = 25
+  ) +
+
+  # Traits saisons
+  geom_vline(
+    data = saisons,
+    aes(xintercept = as.numeric(xmin)),
+    linetype = "dashed", color = "grey50", size = 0.5
+  ) +
+
+  # Labels saisons
+  geom_text(
+    data = saisons,
+    aes(x = label_pos, y = y_max + 2, label = Saison),
+    color = "grey40", size = 4, fontface = "bold"
+  ) +
+
+  scale_fill_manual(
+    values = couleurs_retard,
+    labels = c("> 15 min", "> 30 min", "> 60 min")
+  ) +
+
+  labs(
+    title = paste0("Part des trains en retard par mois (", annee_selectionnee, ")"),
+    x = "Mois",
+    y = "% de trains en retard",
+    fill = "Type de retard"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(size = 13, face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    plot.margin = margin(t = 30, r = 10, b = 10, l = 10)
+  ) +
+  scale_x_date(date_labels = "%m/%Y", date_breaks = "2 months")
+
+# --- Rendu interactif ---
+p
+
+```
+</div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; width: 48%;">
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
 # Choix de l'année
@@ -862,38 +1423,28 @@ retards_mensuels <- data_annee %>%
     retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
     retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
     retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
-    retard_depart = sum(Number_of_late_trains_at_departure, na.rm = TRUE),
     retard_arrivee = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   mutate(
     nb_circules = nb_total - nb_annules,
-    total_retards = retard_arrivee,
-    trains_a_lheure = nb_circules - total_retards,
-    pourcentage_a_lheure = round((trains_a_lheure / nb_circules) * 100, 1),
-    Mois_annee = format(date, "%m/%Y"),
-    tooltip_text = paste0(
-      "<b>", Mois_annee, "</b><br>",
-      "Trains à l'heure : ", trains_a_lheure, " trains<br>",
-      "Soit ", "<b>",pourcentage_a_lheure, "</b>% des trains"
-    )
+    trains_a_lheure = nb_circules - retard_arrivee
   )
 
-# Préparer les retards en long
-# Préparer les retards en long
+# Transformation en long avec % par type
 retards_long <- retards_mensuels %>%
-  pivot_longer(cols = c(`retard_15min`, `retard_30min`, `retard_60min`),
+  pivot_longer(cols = c(retard_15min, retard_30min, retard_60min),
                names_to = "Type_retard",
                values_to = "Nombre") %>%
   mutate(
+    pourcentage = round((Nombre / nb_circules) * 100, 2),
+    Mois_annee = format(date, "%m/%Y"),
     Saison = case_when(
       month(date) %in% c(12, 1, 2) ~ "Hiver",
       month(date) %in% c(3, 4, 5) ~ "Printemps",
       month(date) %in% c(6, 7, 8) ~ "Été",
       month(date) %in% c(9, 10, 11) ~ "Automne"
     ),
-    Mois_annee = format(date, "%m/%Y"),
-    pourcentage = round((Nombre / (Nombre + trains_a_lheure)) * 100, 1),
     tooltip_text = paste0(
       "<b>", Mois_annee, "</b><br>",
       case_when(
@@ -902,46 +1453,35 @@ retards_long <- retards_mensuels %>%
         Type_retard == "retard_60min" ~ "> 60 min : ",
         TRUE ~ ""
       ),
-      Nombre, " trains<br>",
-      "Soit <b>", pourcentage, "</b>% des trains"
+      pourcentage, "% des trains (", Nombre, " trains)"
     )
   )
 
-
-# Saison pour les lignes et texte
+# Saison pour les lignes
 saisons <- data.frame(
   Saison = c("Hiver", "Printemps", "Été", "Automne"),
-  
-  # Début de chaque saison
   xmin = as.Date(c(
-    paste0(annee_selectionnee, "-12-12"),   # Hiver débute le 21 décembre (de l'année précédente mais pour simplifier on le met là)
-    paste0(annee_selectionnee, "-03-21"),   # Printemps 21 mars
-    paste0(annee_selectionnee, "-06-21"),   # Été 21 juin
-    paste0(annee_selectionnee, "-09-21")    # Automne 21 septembre
+    paste0(annee_selectionnee, "-12-12"),
+    paste0(annee_selectionnee, "-03-21"),
+    paste0(annee_selectionnee, "-06-21"),
+    paste0(annee_selectionnee, "-09-21")
   )),
-  
-  # Fin de chaque saison
   xmax = as.Date(c(
-    paste0(annee_selectionnee, "-03-20"),   # Fin hiver (20 mars)
-    paste0(annee_selectionnee, "-06-20"),   # Fin printemps (20 juin)
-    paste0(annee_selectionnee, "-09-20"),   # Fin été (20 septembre)
-    paste0(annee_selectionnee, "-12-20")    # Fin automne (20 décembre)
+    paste0(annee_selectionnee, "-03-20"),
+    paste0(annee_selectionnee, "-06-20"),
+    paste0(annee_selectionnee, "-09-20"),
+    paste0(annee_selectionnee, "-12-20")
   )),
-  
-  # Position des labels (au centre de chaque saison)
   label_pos = as.Date(c(
-    paste0(annee_selectionnee, "-02-05"),  
-    paste0(annee_selectionnee, "-05-05"),   
-    paste0(annee_selectionnee, "-08-05"),  
-    paste0(annee_selectionnee, "-11-05")    
+    paste0(annee_selectionnee, "-02-05"),
+    paste0(annee_selectionnee, "-05-05"),
+    paste0(annee_selectionnee, "-08-05"),
+    paste0(annee_selectionnee, "-11-05")
   ))
 )
 
-
-
-
-# Hauteur maximum
-hauteur_max <- max(retards_mensuels$nb_circules, na.rm = TRUE)
+# Hauteur Y max
+y_max <- max(retards_long %>% group_by(date) %>% summarise(somme = sum(pourcentage)) %>% pull(somme), na.rm = TRUE)
 
 # Couleurs
 couleurs_retard <- c(
@@ -952,109 +1492,245 @@ couleurs_retard <- c(
 
 # --- Graphique ---
 p <- ggplot() +
-  
-  # 1. Trains à l'heure en fond
-  geom_col(
-    data = retards_mensuels,
-    aes(x = date, y = trains_a_lheure, fill = "trains_a_lheure", text = tooltip_text),
-    width = 25,
-    alpha = 0.5
-  ) +
-  
-  # 2. Retards en empilé
+
+  # Zone > 20%
+  geom_rect(aes(xmin = min(retards_long$date) - 15,
+                xmax = max(retards_long$date) + 15,
+                ymin = 20, ymax = y_max + 5),
+            fill = "#FFE0B2", alpha = 0.3) +
+
+  # Retards empilés (%)
   geom_col(
     data = retards_long,
-    aes(x = date, y = Nombre, fill = Type_retard, text = tooltip_text),
-    position = "stack",
-    width = 25
+    aes(x = date, y = pourcentage, fill = Type_retard, text = tooltip_text),
+    position = "stack", width = 25
   ) +
-  
-  # 3. Traits saisons
+
+  # Traits saisons
   geom_vline(
     data = saisons,
     aes(xintercept = as.numeric(xmin)),
-    linetype = "dashed",
-    color = "grey50",
-    size = 0.5
+    linetype = "dashed", color = "grey50", size = 0.5
   ) +
-  
-  # 4. Labels saisons
+
+  # Labels saisons
   geom_text(
     data = saisons,
-    aes(x = label_pos, y = hauteur_max * 1.02, label = Saison),
-    inherit.aes = FALSE,
-    color = "grey40",
-    size = 4,
-    fontface = "bold"
+    aes(x = label_pos, y = y_max + 2, label = Saison),
+    color = "grey40", size = 4, fontface = "bold"
   ) +
-  
+
   scale_fill_manual(
-    values = c(couleurs_retard, "trains_a_lheure" = "grey80"),
-    breaks = c("retard_>_15min", "retard_30min", "retard_60min", "trains_a_lheure"),
-    labels = c("> 15 min", "> 30 min", "> 60 min", "Trains à l'heure")
+    values = couleurs_retard,
+    labels = c("> 15 min", "> 30 min", "> 60 min")
   ) +
-  
+
   labs(
-    title = paste0("Répartition mensuelle des retards ferroviaires (", annee_selectionnee,")"),
+    title = paste0("Part des trains en retard par mois (", annee_selectionnee, ")"),
     x = "Mois",
-    y = "Nombre de trains",
-    fill = "Type"
+    y = "% de trains en retard",
+    fill = "Type de retard"
   ) +
   theme_minimal(base_size = 15) +
   theme(
-    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    plot.title = element_text(size = 13, face = "bold", hjust = 0.5),
     axis.text.x = element_text(angle = 45, hjust = 1),
     panel.grid.major.x = element_blank(),
-    plot.margin = margin(t = 30, r = 10, b = 10, l = 10) 
-    
+    plot.margin = margin(t = 30, r = 10, b = 10, l = 10)
   ) +
   scale_x_date(date_labels = "%m/%Y", date_breaks = "2 months")
 
 # --- Rendu interactif ---
-p_interactif <- ggplotly(p, tooltip = "text")
+p
 
-# --- Affichage ---
-save_plotly(p_interactif)
 ```
 </div>
 </div>
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; width: 48%;">
+<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+# Choix de l'année
+annee_selectionnee <- 2020
 
-### Explication du graphe
+# Filtrer l'année
+data_annee <- data_trains %>%
+  filter(Year == annee_selectionnee) %>%
+  mutate(date = as.Date(sprintf("%d-%02d-01", Year, Month)))
 
-Ce graphique présente la répartition des trains selon leur ponctualité :
+# Agréger
+retards_mensuels <- data_annee %>%
+  group_by(date) %>%
+  summarise(
+    nb_total = sum(Number_of_expected_circulations, na.rm = TRUE),
+    nb_annules = sum(Number_of_cancelled_trains, na.rm = TRUE),
+    retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
+    retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
+    retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
+    retard_arrivee = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    nb_circules = nb_total - nb_annules,
+    trains_a_lheure = nb_circules - retard_arrivee
+  )
 
-- **Trains à l’heure** (barres gris clair)
-- **Retards > 15 minutes** (jaune)
-- **Retards > 30 minutes** (orange)
-- **Retards > 60 minutes** (rouge)
+# Transformation en long avec % par type
+retards_long <- retards_mensuels %>%
+  pivot_longer(cols = c(retard_15min, retard_30min, retard_60min),
+               names_to = "Type_retard",
+               values_to = "Nombre") %>%
+  mutate(
+    pourcentage = round((Nombre / nb_circules) * 100, 2),
+    Mois_annee = format(date, "%m/%Y"),
+    Saison = case_when(
+      month(date) %in% c(12, 1, 2) ~ "Hiver",
+      month(date) %in% c(3, 4, 5) ~ "Printemps",
+      month(date) %in% c(6, 7, 8) ~ "Été",
+      month(date) %in% c(9, 10, 11) ~ "Automne"
+    ),
+    tooltip_text = paste0(
+      "<b>", Mois_annee, "</b><br>",
+      case_when(
+        Type_retard == "retard_15min" ~ "> 15 min : ",
+        Type_retard == "retard_30min" ~ "> 30 min : ",
+        Type_retard == "retard_60min" ~ "> 60 min : ",
+        TRUE ~ ""
+      ),
+      pourcentage, "% des trains (", Nombre, " trains)"
+    )
+  )
 
+# Saison pour les lignes
+saisons <- data.frame(
+  Saison = c("Hiver", "Printemps", "Été", "Automne"),
+  xmin = as.Date(c(
+    paste0(annee_selectionnee, "-12-12"),
+    paste0(annee_selectionnee, "-03-21"),
+    paste0(annee_selectionnee, "-06-21"),
+    paste0(annee_selectionnee, "-09-21")
+  )),
+  xmax = as.Date(c(
+    paste0(annee_selectionnee, "-03-20"),
+    paste0(annee_selectionnee, "-06-20"),
+    paste0(annee_selectionnee, "-09-20"),
+    paste0(annee_selectionnee, "-12-20")
+  )),
+  label_pos = as.Date(c(
+    paste0(annee_selectionnee, "-02-05"),
+    paste0(annee_selectionnee, "-05-05"),
+    paste0(annee_selectionnee, "-08-05"),
+    paste0(annee_selectionnee, "-11-05")
+  ))
+)
+
+# Hauteur Y max
+y_max <- max(retards_long %>% group_by(date) %>% summarise(somme = sum(pourcentage)) %>% pull(somme), na.rm = TRUE)
+
+# Couleurs
+couleurs_retard <- c(
+  "retard_15min" = "#FFEE58",
+  "retard_30min" = "#FFA726",
+  "retard_60min" = "#EF5350"
+)
+
+# --- Graphique ---
+p <- ggplot() +
+
+  # Zone > 20%
+  geom_rect(aes(xmin = min(retards_long$date) - 15,
+                xmax = max(retards_long$date) + 15,
+                ymin = 20, ymax = y_max + 5),
+            fill = "#FFE0B2", alpha = 0.3) +
+
+  # Retards empilés (%)
+  geom_col(
+    data = retards_long,
+    aes(x = date, y = pourcentage, fill = Type_retard, text = tooltip_text),
+    position = "stack", width = 25
+  ) +
+
+  # Traits saisons
+  geom_vline(
+    data = saisons,
+    aes(xintercept = as.numeric(xmin)),
+    linetype = "dashed", color = "grey50", size = 0.5
+  ) +
+
+  # Labels saisons
+  geom_text(
+    data = saisons,
+    aes(x = label_pos, y = y_max + 2, label = Saison),
+    color = "grey40", size = 4, fontface = "bold"
+  ) +
+
+  scale_fill_manual(
+    values = couleurs_retard,
+    labels = c("> 15 min", "> 30 min", "> 60 min")
+  ) +
+
+  labs(
+    title = paste0("Part des trains en retard par mois (", annee_selectionnee, ")"),
+    x = "Mois",
+    y = "% de trains en retard",
+    fill = "Type de retard"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(size = 13, face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    plot.margin = margin(t = 30, r = 10, b = 10, l = 10)
+  ) +
+  scale_x_date(date_labels = "%m/%Y", date_breaks = "2 months")
+
+# --- Rendu interactif ---
+p
+
+```
+</div>
+</div>
+</div>
 <p align="justify">
+Ces graphique présentent la répartition des retards en évidence des saisons pour chaque année allant de 2015 à 2020 (on voit qu'on manque de données pour l'année 2020).
 Chaque saison est marquée par une **ligne verticale pointillée** et un **label** ("Hiver", "Printemps", "Été", "Automne").
 
 Pas possible d'être possible à la date près (car uniquement des données du mois et pas de jours) donc on a arrondis au mois (exemple : 21 décembre -> 1er janvier pour le début de l'hiver.)
 </p>
+ <div style="text-align:center;">
+  <img src="au_fil_des_saisons.png" style="border-radius: 8px; max-width: 80%; margin-bottom: 1rem;" alt="Évolution mensuelle">
+  </div>
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header">Interprétation</div>
+  <div class="card-body">
+  <p>
+      L’analyse des six graphiques annuels met en évidence que le seuil des 
+      <b>20 % de trains en retard est régulièrement franchi durant les périodes de printemps et d’été</b>.
+      Ces pics saisonniers apparaissent de manière récurrente, en particulier <b>entre mai et août</b>.
+
+Une première hypothèse pourrait être liée aux <b>nombreux jours fériés et ponts du mois de mai</b>, qui entraînent une fréquentation accrue du réseau ferroviaire. De même, <b>les départs en vacances estivales</b> 
+      (juillet-août) pourraient expliquer la hausse de retard en été.<br>
+
+Ces constats sont <b>confirmés par le graphique global</b> affichant l’ensemble des années 2015 à 2020 : 
+les périodes dépassant les 20 % de retard <b>coïncident majoritairement avec le printemps et l’été</b>.
+      On note également <b>quelques pics en hiver</b>, sans doute dus à des <i>conditions météorologiques défavorables</i> 
+      (neige, verglas...), mais ceux-ci restent <b>plus rares et moins significatifs</b>.<br>
+
+  </p>
+  </div>
+</div>
 
 ---
 
-### Ce qu'on observe
+## Peut-on identifier des flux ferroviaires particulièrement sensibles ?
 
-- **Été (juillet-août)** : Pic visible des retards > 15 minutes.
-- **Hiver** : Augmentation légère des retards, moins marquée que l’été.
-- **Printemps et automne** : Saisons avec généralement moins de retards.
-
----
-
-### Top 20 gares avec le plus de retard cumulé (Départ + Arrivée combinés)
-
-<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; width: 48%;">
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
-
-
-#  Paramètre : année sélectionnée 
+# Paramètre : année sélectionnée 
 annee_selectionnee <- 2019
 
-#  Préparer données 
+# Préparer données 
 data_filtered <- data_trains %>%
   filter(Year == annee_selectionnee) %>%
   mutate(
@@ -1062,89 +1738,7 @@ data_filtered <- data_trains %>%
     Mois_annee = format(date, "%m/%Y")
   )
 
-#  Regrouper retards par gare de départ et par mois 
-retards_gares <- data_filtered %>%
-  group_by(Departure_station, Mois_annee) %>%
-  summarise(total_retards = sum(Number_of_trains_late_on_arrival, na.rm = TRUE), .groups = "drop")
-
-#  Top 20 gares 
-top_gares <- retards_gares %>%
-  group_by(Departure_station) %>%
-  summarise(total = sum(total_retards, na.rm = TRUE)) %>%
-  arrange(desc(total)) %>%
-  slice(1:20) %>%
-  pull(Departure_station)
-
-#  Garder uniquement le Top 20 
-retards_top20 <- retards_gares %>%
-  filter(Departure_station %in% top_gares)
-
-#  Reordonner les gares 
-retards_top20 <- retards_top20 %>%
-  mutate(Departure_station = factor(Departure_station, levels = rev(top_gares)))
-
-#  Créer la heatmap 
-p <- ggplot(retards_top20, aes(x = Mois_annee, y = Departure_station, fill = total_retards, text = paste0(
-  "<b>Gare :</b> ", Departure_station, "<br>",
-  "<b>Mois :</b> ", Mois_annee, "<br>",
-  "<b>Trains en retard :</b> ", total_retards
-))) +
-  geom_tile(color = "white") +
-  scale_fill_gradient(low = "white", high = "red") +
-  labs(
-    title = paste0("Heatmap des retards (Départ + Arrivée) par gare - ", annee_selectionnee),
-    x = "Mois",
-    y = "Gare",
-    fill = "Trains en retard"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-    axis.text.y = element_text(size = 10),
-    plot.title = element_text(face = "bold", hjust = 0.5),
-    panel.grid.major = element_blank()
-  )
-
-#  Passer en interactif 
-p <- ggplotly(p, tooltip = "text")
-
-#  Affichage 
-save_plotly(p)
-
-
-
-
-```
-</div>
-</div>
-<p align="justify">
-- Cette visualisation montre les **retards cumulés** (départ + arrivée) par gare et par mois.
-- Certaines gares (Paris Montparnasse, Paris Lyon, Lyon Part-Dieu) concentrent une part majeure des retards, surtout autour de l'été et début de l'automne.
-<p>
-
-**Hypothèse** : influence de l’**affluence estivale**, **vacances scolaires**, **travaux d’été**.
-
----
-
-### Retards au départ uniquement
-
-<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
-<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
-
-
-#  Paramètre : année sélectionnée 
-annee_selectionnee <- 2019
-
-#  Préparer données 
-data_filtered <- data_trains %>%
-  filter(Year == annee_selectionnee) %>%
-  mutate(
-    date = as.Date(sprintf("%d-%02d-01", Year, Month)),
-    Mois_annee = format(date, "%m/%Y")
-  )
-
-#  Regrouper retards de départ par gare de départ et par mois 
+# Regrouper retards de départ par gare de départ et par mois 
 retards_gares <- data_filtered %>%
   group_by(Departure_station, Mois_annee) %>%
   summarise(
@@ -1152,40 +1746,50 @@ retards_gares <- data_filtered %>%
     .groups = "drop"
   )
 
-#  Top 20 gares en retard de départ 
+# Calculer le total mensuel tous gares confondues
+totaux_mensuels <- retards_gares %>%
+  group_by(Mois_annee) %>%
+  summarise(total_mois = sum(total_retards_depart), .groups = "drop")
+
+# Fusionner pour calculer les %
+retards_gares <- retards_gares %>%
+  left_join(totaux_mensuels, by = "Mois_annee") %>%
+  mutate(pourcentage = 100 * total_retards_depart / total_mois)
+
+# Top 10 gares avec le plus de retards cumulés (en valeur absolue)
 top_gares <- retards_gares %>%
   group_by(Departure_station) %>%
   summarise(total = sum(total_retards_depart, na.rm = TRUE)) %>%
   arrange(desc(total)) %>%
-  slice(1:20) %>%
+  slice(1:10) %>%
   pull(Departure_station)
 
-#  Garder uniquement le Top 20 
-retards_top20 <- retards_gares %>%
+# Garder uniquement le Top 10
+retards_top10 <- retards_gares %>%
   filter(Departure_station %in% top_gares)
 
-#  Reordonner les gares 
-retards_top20 <- retards_top20 %>%
+# Reordonner les gares
+retards_top10 <- retards_top10 %>%
   mutate(Departure_station = factor(Departure_station, levels = rev(top_gares)))
 
-#  Créer la heatmap 
-p <- ggplot(retards_top20, aes(
+# Créer la heatmap en %
+p <- ggplot(retards_top10, aes(
   x = Mois_annee,
   y = Departure_station,
-  fill = total_retards_depart,
+  fill = pourcentage,
   text = paste0(
     "<b>Gare :</b> ", Departure_station, "<br>",
     "<b>Mois :</b> ", Mois_annee, "<br>",
-    "<b>Retards au départ :</b> ", total_retards_depart
+    "<b>Part des retards :</b> ", round(pourcentage, 1), "%"
   )
 )) +
   geom_tile(color = "white") +
   scale_fill_gradient(low = "white", high = "red") +
   labs(
-    title = paste0("Heatmap des retards au départ par gare - ", annee_selectionnee),
+    title = paste0("Part mensuelle des retards au départ par gare - ", annee_selectionnee),
     x = "Mois",
     y = "Gare",
-    fill = "Retards au départ"
+    fill = "% des retards"
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -1195,34 +1799,19 @@ p <- ggplot(retards_top20, aes(
     panel.grid.major = element_blank()
   )
 
-#  Passer en interactif 
-p <- ggplotly(p, tooltip = "text")
-
-#  Affichage 
-save_plotly(p)
+# Passer en interactif
+p
 
 ```
 </div>
 </div>
-<p align="justify">
-- On observe que **les retards au départ** sont très concentrés sur quelques grandes gares.
-- En particulier **Paris Montparnasse**, qui ressort beaucoup.
-</p>
-
-**Hypothèse** : **problèmes organisationnels** en gare : gestion de flux, embarquement, correspondances, grèves.
-
----
-
-### Retards à l'arrivée uniquement
-<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
+<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; width: 48%;">
 <div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
 ```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
-
-
-#  Paramètre : année sélectionnée 
+# Paramètre : année sélectionnée 
 annee_selectionnee <- 2019
 
-#  Préparer données 
+# Préparer données 
 data_filtered <- data_trains %>%
   filter(Year == annee_selectionnee) %>%
   mutate(
@@ -1230,7 +1819,7 @@ data_filtered <- data_trains %>%
     Mois_annee = format(date, "%m/%Y")
   )
 
-#  Regrouper retards d'arrivée par gare de départ et par mois 
+# Regrouper retards d'arrivée par gare de départ et par mois 
 retards_gares <- data_filtered %>%
   group_by(Departure_station, Mois_annee) %>%
   summarise(
@@ -1238,40 +1827,50 @@ retards_gares <- data_filtered %>%
     .groups = "drop"
   )
 
-#  Top 20 gares en retard à l'arrivée 
+# Calcul du total mensuel global (toutes gares confondues)
+totaux_mensuels <- retards_gares %>%
+  group_by(Mois_annee) %>%
+  summarise(total_mois = sum(total_retards_arrivee), .groups = "drop")
+
+# Fusion et calcul du pourcentage
+retards_gares <- retards_gares %>%
+  left_join(totaux_mensuels, by = "Mois_annee") %>%
+  mutate(pourcentage = 100 * total_retards_arrivee / total_mois)
+
+# Top 10 gares en retard à l'arrivée (en valeur absolue)
 top_gares <- retards_gares %>%
   group_by(Departure_station) %>%
   summarise(total = sum(total_retards_arrivee, na.rm = TRUE)) %>%
   arrange(desc(total)) %>%
-  slice(1:20) %>%
+  slice(1:10) %>%
   pull(Departure_station)
 
-#  Garder uniquement le Top 20 
-retards_top20 <- retards_gares %>%
+# Garder uniquement le Top 10
+retards_top10 <- retards_gares %>%
   filter(Departure_station %in% top_gares)
 
-#  Reordonner les gares 
-retards_top20 <- retards_top20 %>%
+# Reordonner les gares
+retards_top10 <- retards_top10 %>%
   mutate(Departure_station = factor(Departure_station, levels = rev(top_gares)))
 
-#  Créer la heatmap 
-p <- ggplot(retards_top20, aes(
+# Créer la heatmap en %
+p <- ggplot(retards_top10, aes(
   x = Mois_annee,
   y = Departure_station,
-  fill = total_retards_arrivee,
+  fill = pourcentage,
   text = paste0(
     "<b>Gare :</b> ", Departure_station, "<br>",
     "<b>Mois :</b> ", Mois_annee, "<br>",
-    "<b>Retards à l'arrivée :</b> ", total_retards_arrivee
+    "<b>Part des retards :</b> ", round(pourcentage, 1), "%"
   )
 )) +
   geom_tile(color = "white") +
   scale_fill_gradient(low = "white", high = "red") +
   labs(
-    title = paste0("Heatmap des retards à l'arrivée par gare - ", annee_selectionnee),
+    title = paste0("Part mensuelle des retards à l'arrivée par gare - ", annee_selectionnee),
     x = "Mois",
     y = "Gare",
-    fill = "Trains en retard"
+    fill = "% des retards"
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -1281,154 +1880,33 @@ p <- ggplot(retards_top20, aes(
     panel.grid.major = element_blank()
   )
 
-#  Passer en interactif 
-p <- ggplotly(p, tooltip = "text")
-
-#  Affichage 
-save_plotly(p)
-
+# Passer en interactif
+p
 
 ```
 </div>
 </div>
-<p align="justify">
-- Les **retards à l’arrivée** semblent un peu plus diffus, bien qu’ils restent concentrés sur les gares principales.
-</p>
-**Hypothèse** : **aléas pendant le trajet** (accidents, incidents techniques, météo) 
-
-On détaillera cela dans une prochaine question.
-
----
-
-### Répartition des retards par gare
-<div class="card text-white bg-secondary mb-3" style="border-radius: 12px; max-width: fit-content; margin: auto;">   
-<div class="card-body bg-white" style="padding: 1rem; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-```{r echo=FALSE, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
-
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(plotly)
-
-# Construction de la date (si jamais utile plus tard)
-data_trains <- data_trains %>%
-  mutate(date = as.Date(sprintf("%d-%02d-01", Year, Month)))
-
-# Agréger les retards par gare
-retards_gares <- data_trains %>%
-  group_by(Departure_station) %>%
-  summarise(
-    retard_15min = sum(`Number_of_late_trains_>_15min`, na.rm = TRUE),
-    retard_30min = sum(`Number_of_late_trains_>_30min`, na.rm = TRUE),
-    retard_60min = sum(`Number_of_late_trains_>_60min`, na.rm = TRUE),
-    total_retards = sum(Number_of_trains_late_on_arrival, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# Top 3 gares
-top3_gares <- retards_gares %>%
-  arrange(desc(total_retards)) %>%
-  slice(1:3)
-
-# Regrouper les autres
-autres_gares <- retards_gares %>%
-  filter(!(Departure_station %in% top3_gares$Departure_station)) %>%
-  summarise(
-    Departure_station = "Autres gares",
-    retard_15min = sum(retard_15min, na.rm = TRUE),
-    retard_30min = sum(retard_30min, na.rm = TRUE),
-    retard_60min = sum(retard_60min, na.rm = TRUE),
-    total_retards = sum(total_retards, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# Combiner top 3 + autres
-retards_final <- bind_rows(top3_gares, autres_gares)
-
-# Format long pour ggplot
-retards_long <- retards_final %>%
-  pivot_longer(cols = c(retard_15min, retard_30min, retard_60min),
-               names_to = "Type_retard",
-               values_to = "Nombre") %>%
-  mutate(
-    Type_retard = factor(Type_retard, levels = c("retard_15min", "retard_30min", "retard_60min"))
-  )
-
-# Couleurs personnalisées
-couleurs_retard <- c(
-  "retard_15min" = "#FFEE58",
-  "retard_30min" = "#FFA726",
-  "retard_60min" = "#EF5350"
-)
-
-# Graphique
-p <- ggplot(retards_long, aes(
-  x = reorder(Departure_station, -Nombre, FUN = sum),
-  y = Nombre,
-  fill = Type_retard,
-  text = paste0(
-    "<b>Gare :</b> ", Departure_station, "<br>",
-    "Trains en retard : ", Nombre, " trains"
-  )
-)) +
-  geom_col(position = "stack") +
-  coord_flip() +
-  scale_fill_manual(values = couleurs_retard,
-                    labels = c("> 15 min", "> 30 min", "> 60 min")) +
-  labs(
-    title = "Répartition des retards : Top 3 gares + Autres",
-    x = "Gare de départ",
-    y = "Nombre de trains en retard",
-    fill = "Type de retard"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", hjust = 0.5),
-    axis.text.y = element_text(size = 10)
-  )
-
-# Interaction Plotly
-p <- ggplotly(p, tooltip = "text")
-
-# Affichage
-save_plotly(p)
-
-
-
-```
-</div>
 </div>
 
-- **Histogramme** des 3 gares les plus concernées par les retards en comparaisons aux autres.
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header">Interprétation</div>
+  <div class="card-body">
+<p> L’analyse  des retards au <b>départ</b> et à <b>l’arrivée</b> permet de mettre en évidence une forte concentration des retards autour des <b>grandes gares parisiennes</b>, notamment <b>Paris Montparnasse</b>, <b>Paris Lyon</b> et <b>Paris Est</b>. Ces gares occupent une place centrale dans le réseau ferroviaire de la France et constituent des <b>hubs nationaux</b> par lesquels transitent un grand nombre de trains à longue distance, ce qui peut expliquer leur forte exposition aux retards. </p> <p> On observe également un volume significatif de retards à <b>Lyon Part-Dieu</b> et <b>Marseille Saint-Charles</b>, confirmant l’importance de ces nœuds régionaux dans le système ferroviaire. Les retards semblent donc principalement concentrés dans les <b>axes structurants reliant Paris aux grandes métropoles régionales</b>, notamment vers le sud-est (Lyon, Marseille) et le nord (Lille). </p> 
+  </div>
+</div>
 
----
 
-### Résultats observés
 
-- **Paris Montparnasse**, **Paris Lyon** et **Lyon Part-Dieu** concentrent **plus de 35%** des retards ferroviaires à elles seules.
-- Les autres gares contribuent beaucoup moins individuellement.
 
----
 
-## Conclusion générale Question 1
+## Bilan de l'Analyse spatio-temporelle des retards
 
-Grâce aux différents graphiques réalisés, nous pouvons conclure :
-
-- En **2019**, **les retards ferroviaires** sont principalement concentrés sur **quelques grandes gares stratégiques**.
-- Il existe une **saisonnalité** des retards : davantage en **été** (vacances, affluence, chaleur) et en **hiver** (conditions climatiques, période de Noël).
-
-Bien que l’analyse porte sur **l'année 2019**, les mêmes **tendances générales** semblent observables sur **2015–2020**.
-
----
-
-## Perspectives
-
-Plus tard, avec **Shiny**, nous créerons une **application interactive** qui permettra :
-- De **filtrer dynamiquement** par année, par gare, par saison,
-- D’**explorer les retards ferroviaires** plus efficacement et en temps réel.
-
-Cela permettra de **confirmer ou nuancer** les tendances mises en évidence ici.
-
+<div class="card text-white bg-success mb-3">
+  <div class="card-header">Bilan</div>
+  <div class="card-body">
+<p align="justify"> En particulier, l’analyse croisée entre le <b>nombre total de trains en retard</b> et leur <b>taux rapporté au trafic</b> nous a permis de mettre en lumière des différences intéressantes : certaines gares comme Paris Montparnasse ou Lyon Part-Dieu enregistrent un volume important de retards, mais cela reste proportionnel à leur forte fréquentation. À l’inverse, d’autres gares moins fréquentées affichent un <b>taux de retard plus élevé</b>, ce qui peut les rendre intéressantes à analyser plus en détail. </p> <p align="justify"> Nous allons désormais nous intéresser à un autre facteur potentiel d’explication : <b>l’influence du mois ou de la période de l’année</b> sur le nombre de retards constatés. L’objectif est de voir s’il existe des <b>périodes spécifiques où les retards sont plus fréquents</b>, ce qui pourrait nous aiguiller sur des causes saisonnières, structurelles ou événementielles. </p>
+ </div>
+</div>
 ---
 
 # Impact des saisons et des conditions météorologiques 
