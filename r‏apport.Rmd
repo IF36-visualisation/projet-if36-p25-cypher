@@ -1613,9 +1613,10 @@ save_plotly(p)
 </div>
 </div>
 
-### Explication du graphe
-
-Ce graphique représente la proportion de cause des retards référencés dans le dataset. Ces causes sont divisées en plusieurs catégories : 
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header">Interprétation</div>
+  <div class="card-body">
+   Ce graphique représente la proportion de cause des retards référencés dans le dataset. Ces causes sont divisées en plusieurs catégories : 
 
 - les causes externes (par exemple le temps, les obstacles sur la voie ou des actions malveillantes)
 - l'infrastructure ferroviaire (par exemple pendant des travaux de maintenance)
@@ -1624,10 +1625,14 @@ Ce graphique représente la proportion de cause des retards référencés dans l
 - le retard en station (par exemple sur la réutilisation du matériel)
 - le retard du aux voyageurs (par exemble au moment de l'embarcation)
 
-### Observations
-
-- On peut voir que les causes de retard les plus fréquentes sont celles liées à **l'extérieur** et celles liées à **l'infrastructure ferroviaire**, à respectivement **27%** et **26%** environ. 
-- Les retards dûs aux **voyageurs** en eux-mêmes sont beaucoup moins fréquents, n'atteignant pas **4%** des retards renseignés dans le dataset.
+On peut voir que les causes de retard les plus fréquentes sont celles liées à **l'extérieur** et celles liées à **l'infrastructure ferroviaire**, à respectivement **27%** et **26%** environ. 
+Les retards dûs aux **voyageurs** en eux-mêmes sont beaucoup moins fréquents, n'atteignant pas **4%** des retards renseignés dans le dataset.
+<br>
+On peut alors se dire que la majorité des retards ne sont pas du ressort de la SNCF, ou alors peuvent être anticipés avec ceux dûs à l'infrastructure ferroviaire. Toutefois, ces données peuvent ne pas être uniformes et changer selon plusieurs paramètres, ce qui pourrai
+changer certaines choses, dans le cas où la SNCF a des périodes de travaux préférées par exemple.
+    </p>
+  </div>
+</div>
 
 ## Certaines causes sont-elles plus fréquentes selon les mois ?
 
