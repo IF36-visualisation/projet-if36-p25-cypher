@@ -2485,3 +2485,13 @@ L’interopérabilité constitue également un point clé dans la comparaison. T
 </p>
 </div>
 </div>
+
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">5. Personnalisation et adaptabilité des visualisations</div>
+<div class="card-body">
+<p class="card-text">
+Concernant la personnalisation, les différences sont significatives. Tableau permet certes des visualisations avancées, comme on peut le voir plus haut sur le graphique reproduit sur Tableau, mais a rapidement des limites dans la capacité à répondre à des besoins très spécifiques ou innovants. Les utilisateurs atteignent rapidement un plafond technique lorsqu’il s’agit d'intégrer des logiques personnalisées ou complexes. D’ailleurs, la personnalisation est limitée à ce que Tableau a intégré à son outil.<br>
+Shiny offre quant à lui une liberté totale en termes de personnalisation, tout aspect, de la structure des graphiques aux interactions utilisateur, est entièrement adaptable par code. Bien sûr, cela implique des compétences techniques plus poussées, mais garantit aussi un résultat parfaitement aligné avec les exigences spécifiques des projets ambitieux. En somme, pour du long terme, il vaudra toujours mieux utiliser Shiny R que Tableau car la personnalisation possible est plus vaste (beaucoup plus poussée avec les centaines de bibliothèques que R possède).
+</p>
+</div>
+</div>
