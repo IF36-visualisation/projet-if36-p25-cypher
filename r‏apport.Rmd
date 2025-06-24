@@ -2455,4 +2455,15 @@ Le premier aspect essentiel à considérer est la différence marquée au niveau
 </div>
 </div>
 
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">2. Collaboration et gestion des modifications</div>
+<div class="card-body">
+<p class="card-text">
+Le deuxième enjeu majeur dans l’utilisation de Tableau concerne les difficultés de collaboration. À l'image de nombreuses solutions no-code, Tableau rend très complexe le travail simultané sur un même projet. L’interface ne permet pas un suivi clair des modifications effectuées par plusieurs personnes, ce qui complique considérablement le partage et la gestion collaborative des fichiers. On peut s’envoyer les fichiers par des messageries, mais ça reste très limité d’un point de vue organisation collaborative, ce qui mène souvent à la réalisation d’un projet seul.<br>
+En outre, Tableau, dans son utilisation, génère fréquemment des interdépendances entre les différents éléments (feuilles, tableaux de bord, champs calculés). Avec ces interdépendances, une simple modification peut provoquer une cascade d’erreurs difficiles à diagnostiquer, surtout quand on arrive dans le projet en cours de route, ou qu’on reprend le travail après quelqu’un d’autre sur une base déjà existante. De plus, Tableau ne dispose d'aucune solution intégrée de versionnage, obligeant les équipes à maintenir des environnements distincts de développement test et de production pour limiter les risques.<br>
+Ce manque de gestion efficace des modifications et des versions provient surtout d'une incompatibilité entre des solutions propriétaires comme Tableau et les méthodes de développement modernes, reposant sur des outils de référence tels que Git, largement adoptés dans le secteur du développement logiciel. En effet, il serait impossible de recréer, ou extrêmement difficile de recréer un environnement aussi optimisé que Git dans un outil propriétaire.
+</p>
+</div>
+</div>
+
 
