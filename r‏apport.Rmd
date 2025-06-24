@@ -2517,3 +2517,13 @@ Ainsi, la vente initiale de simplicité du no-code cache des coûts techniques l
 </p>
 </div>
 </div>
+<div class="card text-white bg-primary mb-3">
+<div class="card-header">Conclusion</div>
+<div class="card-body">
+<p class="card-text">
+Tableau et Shiny répondent à des besoins et contextes d’utilisation très distincts. Tableau séduit initialement par sa simplicité apparente, mais présente rapidement des limitations citées au-dessus. À l’inverse, Shiny demande un investissement initial en compétence, mais garantit une maîtrise totale et une évolutivité quasi illimitée.<br><br>
+Le choix entre ces deux solutions dépendra donc des objectifs à long terme, du budget disponible et des compétences techniques existantes ou à développer au sein de l’équipe. Il n’y a quasiment pas de valeur ajoutée à la solution Tableau, si ce n’est de faire du prototypage extrêmement rapide. Et encore, cet argument fonctionne pour des solutions comme Bubble, qui permette de créer des applications. Beaucoup moins pour une solution qui propose de la data science/ visualisation/ analyse de données. De plus, continuer sur du ML / DL est encore vraiment compliqué sur Tableau, ce qui fait parti des choses en vogues en 2025.
+</p>
+</div>
+</div>
+
